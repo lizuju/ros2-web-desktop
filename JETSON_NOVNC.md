@@ -2,6 +2,7 @@
 
 This mode runs `rviz2`, `rqt`, and other ROS 2 GUI tools on the Jetson inside a local virtual desktop. Your Mac only opens a browser page, so it does not use SSH X11 forwarding.
 
+For the shortest user flow, see [QUICKSTART.md](QUICKSTART.md).
 For sharing this workflow with other Jetson users, see [DISTRIBUTING_JETSON_NOVNC.md](DISTRIBUTING_JETSON_NOVNC.md).
 For local SSH tunnel commands on macOS, Linux, and Windows, see [LOCAL_TUNNEL.md](LOCAL_TUNNEL.md).
 

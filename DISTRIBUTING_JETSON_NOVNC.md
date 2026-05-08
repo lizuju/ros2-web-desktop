@@ -2,6 +2,8 @@
 
 Use this when giving the noVNC RViz/RQt workflow to another Jetson user.
 
+For normal users, [QUICKSTART.md](QUICKSTART.md) is the shortest path.
+
 ## What the Jetson Needs
 
 - Ubuntu with ROS 2 already installed, usually Humble on Ubuntu 22.04.

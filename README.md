@@ -2,7 +2,7 @@
 
 This repository provides a containerized **ROS 2 Humble** environment with a virtual desktop (NoVNC) accessible via your web browser. This setup allows you to run GUI-based robotics tools like Gazebo and Rviz without needing a native Linux installation.
 
-For viewing a remote Jetson's `rviz2` / `rqt` from a Mac, Linux, or Windows computer without SSH X11 forwarding, use the Jetson noVNC mode in [JETSON_NOVNC.md](JETSON_NOVNC.md). The secure default uses a local SSH tunnel documented in [LOCAL_TUNNEL.md](LOCAL_TUNNEL.md).
+For viewing a remote Jetson's `rviz2` / `rqt` from a Mac, Linux, or Windows computer without SSH X11 forwarding, start with [QUICKSTART.md](QUICKSTART.md). More detailed Jetson noVNC notes are in [JETSON_NOVNC.md](JETSON_NOVNC.md), and SSH tunnel details are in [LOCAL_TUNNEL.md](LOCAL_TUNNEL.md).
 
 ## Prerequisites
 
@@ -18,7 +18,7 @@ Open a **Terminal** (Mac) or **PowerShell** (Windows) and follow these steps in 
 
 ### A. Clone the Repository
 ```bash
-git clone https://github.com/quattrinili/vnc-ros
+git clone -b ros2-humble https://github.com/lizuju/vnc-ros.git
 cd vnc-ros
 ```
 
