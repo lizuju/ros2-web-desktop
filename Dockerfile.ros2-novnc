@@ -52,9 +52,9 @@ RUN mkdir -p /root/ros2_ws/src \
     && echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> /root/.bashrc \
     && echo "[ -f /root/ros2_ws/install/setup.bash ] && source /root/ros2_ws/install/setup.bash" >> /root/.bashrc
 
-COPY scripts/start-jetson-novnc.sh /usr/local/bin/start-jetson-novnc
-RUN chmod +x /usr/local/bin/start-jetson-novnc
+COPY scripts/start-ros2-novnc.sh /usr/local/bin/start-ros2-novnc
+RUN chmod +x /usr/local/bin/start-ros2-novnc
 
 WORKDIR /root/ros2_ws
 
-ENTRYPOINT ["/usr/local/bin/start-jetson-novnc"]
+ENTRYPOINT ["/usr/local/bin/start-ros2-novnc"]

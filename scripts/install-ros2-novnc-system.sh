@@ -1,5 +1,15 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-exec "${SCRIPT_DIR}/install-jetson-novnc-system.sh" "$@"
+sudo apt-get update
+sudo apt-get install -y --no-install-recommends \
+  dbus-x11 \
+  fluxbox \
+  libgl1-mesa-dri \
+  libglx-mesa0 \
+  mesa-utils \
+  novnc \
+  websockify \
+  x11vnc \
+  xterm \
+  xvfb

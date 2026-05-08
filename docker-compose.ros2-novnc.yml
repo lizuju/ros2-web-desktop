@@ -1,8 +1,8 @@
 services:
-  jetson-novnc:
+  ros2-novnc:
     build:
       context: .
-      dockerfile: Dockerfile.jetson-novnc
+      dockerfile: Dockerfile.ros2-novnc
     platform: linux/arm64
     network_mode: host
     ipc: host

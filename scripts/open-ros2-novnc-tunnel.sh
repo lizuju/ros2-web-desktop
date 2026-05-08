@@ -1,5 +1,18 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-exec "${SCRIPT_DIR}/open-jetson-novnc-tunnel.sh" "$@"
+if [ "$#" -lt 1 ] || [ "$#" -gt 3 ]; then
+  echo "Usage: $0 <user@device-host> [local-port] [remote-port]"
+  echo "Example: $0 <device-user>@<device-host>"
+  exit 1
+fi
+
+TARGET="$1"
+LOCAL_PORT="${2:-18080}"
+REMOTE_PORT="${3:-31880}"
+
+echo "Opening SSH tunnel:"
+echo "  http://localhost:${LOCAL_PORT}/vnc.html -> ${TARGET}:127.0.0.1:${REMOTE_PORT}"
+echo "Keep this terminal open. Press Ctrl+C to close the tunnel."
+
+ssh -N -L "127.0.0.1:${LOCAL_PORT}:127.0.0.1:${REMOTE_PORT}" "$TARGET"
