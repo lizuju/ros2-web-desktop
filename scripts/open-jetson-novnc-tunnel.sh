@@ -8,8 +8,8 @@ if [ "$#" -lt 1 ] || [ "$#" -gt 3 ]; then
 fi
 
 TARGET="$1"
-LOCAL_PORT="${2:-8080}"
-REMOTE_PORT="${3:-8080}"
+LOCAL_PORT="${2:-18080}"
+REMOTE_PORT="${3:-31880}"
 
 echo "Opening SSH tunnel:"
 echo "  http://localhost:${LOCAL_PORT}/vnc.html -> ${TARGET}:127.0.0.1:${REMOTE_PORT}"

@@ -2,9 +2,9 @@ param(
     [Parameter(Mandatory = $true)]
     [string]$Target,
 
-    [int]$LocalPort = 8080,
+    [int]$LocalPort = 18080,
 
-    [int]$RemotePort = 8080
+    [int]$RemotePort = 31880
 )
 
 Write-Host "Opening SSH tunnel:"

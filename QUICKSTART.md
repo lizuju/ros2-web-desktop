@@ -12,6 +12,8 @@ cd vnc-ros
 ./scripts/setup-jetson-novnc-system.sh
 ```
 
+The setup script asks for `ROS_DOMAIN_ID`, the robot workspace setup file, and ports. Press Enter to accept the suggested values. The suggested ports are uncommon free ports, usually `31880` for noVNC and `31901` for the backend VNC server.
+
 Start it:
 
 ```bash
@@ -26,13 +28,13 @@ Keep this terminal open.
 Open an SSH tunnel:
 
 ```bash
-ssh -N -L 18080:127.0.0.1:8080 <jetson-user>@<jetson-ip>
+ssh -N -L 18080:127.0.0.1:<NOVNC_PORT> <jetson-user>@<jetson-ip>
 ```
 
 Example:
 
 ```bash
-ssh -N -L 18080:127.0.0.1:8080 wheeltec@192.168.124.162
+ssh -N -L 18080:127.0.0.1:31880 wheeltec@192.168.124.162
 ```
 
 Keep this terminal open, then browse to:
@@ -50,7 +52,7 @@ rviz2
 rqt
 ```
 
-## If the Robot Workspace Needs Sourcing
+## Change Settings Later
 
 Edit `.env` on the Jetson:
 
@@ -59,10 +61,13 @@ cd ~/vnc-ros
 nano .env
 ```
 
-Set this to the robot workspace setup file:
+Common settings:
 
 ```bash
+ROS_DOMAIN_ID=7
 JETSON_ROS_SETUP=/home/wheeltec/wheeltec_ros2/install/setup.bash
+NOVNC_PORT=31880
+VNC_PORT=31901
 ```
 
 Restart `./scripts/start-jetson-novnc-system.sh`.

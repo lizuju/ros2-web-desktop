@@ -22,25 +22,19 @@ For normal users, [QUICKSTART.md](QUICKSTART.md) is the shortest path.
 Get the project onto the Jetson by cloning your published repo or copying the folder:
 
 ```bash
-git clone <your-repo-url> vnc-ros
+git clone -b ros2-humble https://github.com/lizuju/vnc-ros.git
 cd vnc-ros
-cp .env.jetson.example .env
+./scripts/setup-jetson-novnc-system.sh
 ```
 
-If the robot has a workspace setup file, edit `.env`:
+The setup script asks for the robot-specific values and writes `.env`:
 
 ```bash
 JETSON_ROS_SETUP=/home/wheeltec/wheeltec_ros2/install/setup.bash
 ROS_DOMAIN_ID=0
-VNC_PORT=5901
-NOVNC_PORT=8080
+VNC_PORT=31901
+NOVNC_PORT=31880
 NOVNC_LISTEN_HOST=127.0.0.1
-```
-
-Install the noVNC desktop dependencies:
-
-```bash
-./scripts/install-jetson-novnc-system.sh
 ```
 
 ## Start on the Jetson
@@ -69,19 +63,19 @@ On Windows PowerShell:
 Then open:
 
 ```text
-http://localhost:8080/vnc.html
+http://localhost:18080/vnc.html
 ```
 
 If the local computer does not have this repository, use the raw SSH command:
 
 ```bash
-ssh -L 8080:localhost:8080 <user>@<jetson-ip>
+ssh -L 18080:127.0.0.1:31880 <user>@<jetson-ip>
 ```
 
 Then open:
 
 ```text
-http://localhost:8080/vnc.html
+http://localhost:18080/vnc.html
 ```
 
 This is noVNC over HTTP/WebSocket, not SSH X11 forwarding.
@@ -95,7 +89,7 @@ NOVNC_LISTEN_HOST=0.0.0.0
 Then open:
 
 ```text
-http://<jetson-ip>:8080/vnc.html
+http://<jetson-ip>:31880/vnc.html
 ```
 
 ## Use
@@ -113,8 +107,8 @@ rqt
 If the noVNC page opens but Connect fails, check whether the backend VNC port is already used:
 
 ```bash
-ss -lntp | grep -E ':8080|:5901|:5900' || true
+ss -lntp | grep -E ':31880|:31901|:5900' || true
 tail -n 80 logs/novnc.log logs/x11vnc.log logs/xvfb.log
 ```
 
-If `5901` is also occupied, change `VNC_PORT` in `.env`.
+If the chosen backend port is also occupied, change `VNC_PORT` in `.env`.

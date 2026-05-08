@@ -1,7 +1,7 @@
 # Local SSH Tunnel for Jetson noVNC
 
 Use this mode when the Jetson noVNC server is bound to `127.0.0.1`.
-It prevents other machines on the LAN from opening `http://<jetson-ip>:8080`.
+It prevents other machines on the LAN from opening the Jetson noVNC port directly.
 
 The Jetson must already be running:
 
@@ -21,13 +21,13 @@ On the local computer:
 Keep that terminal open, then browse to:
 
 ```text
-http://localhost:8080/vnc.html
+http://localhost:18080/vnc.html
 ```
 
 If the local computer does not have this repository, run the raw SSH command:
 
 ```bash
-ssh -N -L 127.0.0.1:8080:127.0.0.1:8080 wheeltec@192.168.124.162
+ssh -N -L 127.0.0.1:18080:127.0.0.1:31880 wheeltec@192.168.124.162
 ```
 
 ## Windows PowerShell
@@ -41,25 +41,25 @@ On the local computer:
 Keep that PowerShell window open, then browse to:
 
 ```text
-http://localhost:8080/vnc.html
+http://localhost:18080/vnc.html
 ```
 
 If PowerShell blocks script execution, run the raw SSH command instead:
 
 ```powershell
-ssh -N -L 127.0.0.1:8080:127.0.0.1:8080 wheeltec@192.168.124.162
+ssh -N -L 127.0.0.1:18080:127.0.0.1:31880 wheeltec@192.168.124.162
 ```
 
 ## Custom Ports
 
-If `8080` is already used locally:
+If `18080` is already used locally:
 
 ```bash
-./scripts/open-jetson-novnc-tunnel.sh wheeltec@192.168.124.162 18080 8080
+./scripts/open-jetson-novnc-tunnel.sh wheeltec@192.168.124.162 18081 31880
 ```
 
 Open:
 
 ```text
-http://localhost:18080/vnc.html
+http://localhost:18081/vnc.html
 ```

@@ -10,13 +10,11 @@ For local SSH tunnel commands on macOS, Linux, and Windows, see [LOCAL_TUNNEL.md
 
 ### Without Docker
 
-Use this path if `docker` is not installed on the Jetson.
+Use this path if `docker` is not installed on the Jetson. For first-time setup, use the setup wrapper:
 
 ```bash
 cd vnc-ros
-cp .env.jetson.example .env
-chmod +x scripts/install-jetson-novnc-system.sh scripts/start-jetson-novnc-system.sh
-./scripts/install-jetson-novnc-system.sh
+./scripts/setup-jetson-novnc-system.sh
 ./scripts/start-jetson-novnc-system.sh
 ```
 
@@ -45,7 +43,7 @@ On Windows PowerShell:
 Then open this from the local computer:
 
 ```text
-http://localhost:8080/vnc.html
+http://localhost:18080/vnc.html
 ```
 
 Click **Connect**. The desktop opens with a terminal already sourced for ROS 2.
@@ -94,13 +92,13 @@ source install/setup.bash
 Secure mode is the default. It tunnels only the web page:
 
 ```bash
-ssh -L 8080:localhost:8080 wheeltec@<jetson-ip>
+ssh -L 18080:127.0.0.1:31880 wheeltec@<jetson-ip>
 ```
 
 Then open:
 
 ```text
-http://localhost:8080/vnc.html
+http://localhost:18080/vnc.html
 ```
 
 This is HTTP tunneling for noVNC, not X11 forwarding.
@@ -116,5 +114,5 @@ NOVNC_LISTEN_HOST=0.0.0.0
 Then restart `./scripts/start-jetson-novnc-system.sh` and open:
 
 ```text
-http://<jetson-ip>:8080/vnc.html
+http://<jetson-ip>:31880/vnc.html
 ```
