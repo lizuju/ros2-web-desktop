@@ -1,6 +1,9 @@
 # vnc-ros | Jetson noVNC ROS 2 Desktop
 
-[中文](README.zh-CN.md)
+<p align="left">
+  <a href="README.md"><img src="https://img.shields.io/badge/切换语言-简体中文-blue" alt="简体中文"></a>
+  <a href="README.en.md"><img src="https://img.shields.io/badge/Switch-English-blue" alt="English"></a>
+</p>
 
 `vnc-ros` lets users view and operate ROS 2 GUI tools running on a remote Jetson from a browser on **macOS, Windows, or Linux**. It is designed for tools such as `rviz2`, `rqt`, `rqt_graph`, `rqt_image_view`, and a graphical Jetson terminal.
 
@@ -12,8 +15,7 @@ The GUI applications run on the Jetson. The local computer only receives a brows
 
 ## What This Helps With
 
-- View Jetson RViz2 / rqt from an Apple Silicon Mac without X11 forwarding.
-- Use the same browser workflow from Windows or Linux.
+- View Jetson RViz2, rqt, and other ROS GUI tools through a browser on Apple Silicon Mac, Windows, or Linux while avoiding slow X11 forwarding.
 - Let users inspect robot state, topics, tf, maps, point clouds, and GUI tools without installing ROS locally.
 - Access noVNC through an SSH tunnel by default, so the Jetson noVNC port is not exposed directly to the LAN.
 

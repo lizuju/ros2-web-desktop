@@ -1,6 +1,9 @@
 # vnc-ros | Jetson noVNC ROS 2 远程桌面
 
-[English](README.en.md)
+<p align="left">
+  <a href="README.md"><img src="https://img.shields.io/badge/切换语言-简体中文-blue" alt="简体中文"></a>
+  <a href="README.en.md"><img src="https://img.shields.io/badge/Switch-English-blue" alt="English"></a>
+</p>
 
 `vnc-ros` 可以让用户在 **macOS、Windows、Linux** 的浏览器里查看和操作远程 Jetson 上的 ROS 2 图形工具，例如 `rviz2`、`rqt`、`rqt_graph`、`rqt_image_view` 和图形终端。
 
@@ -12,8 +15,7 @@
 
 ## 适合解决什么问题
 
-- 在 Mac Apple Silicon 上查看 Jetson 的 RViz2 / rqt，避免 X11 转发卡顿。
-- 在 Windows 或 Linux 电脑上用浏览器查看 Jetson 的 ROS 图形界面。
+- 在 Mac Apple Silicon、Windows 或 Linux 电脑上通过浏览器查看 Jetson 的 RViz2、rqt 等 ROS 图形界面，避免 X11 转发卡顿。
 - 让使用者无需配置本地 ROS 环境，也能快速查看机器人状态、topic、tf、地图、点云等。
 - 通过 SSH 隧道访问 noVNC，默认不把 Jetson 的 noVNC 端口暴露给局域网。
 
