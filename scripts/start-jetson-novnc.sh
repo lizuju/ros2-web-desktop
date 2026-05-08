@@ -63,13 +63,13 @@ pids+=("$!")
 names+=("websockify")
 logs+=("/tmp/jetson-novnc/novnc.log")
 
-xterm -title "Jetson ROS 2" -geometry 132x36+20+20 -e bash -lc 'source /opt/ros/${ROS_DISTRO}/setup.bash; [ -f /root/ros2_ws/install/setup.bash ] && source /root/ros2_ws/install/setup.bash; echo "ROS_DOMAIN_ID=${ROS_DOMAIN_ID}"; echo "Run: ros2 topic list"; echo "Run: rviz2"; echo "Run: rqt"; exec bash' >/tmp/jetson-novnc/xterm.log 2>&1 &
+xterm -title "ROS 2 Remote Desktop" -geometry 132x36+20+20 -e bash -lc 'source /opt/ros/${ROS_DISTRO}/setup.bash; [ -f /root/ros2_ws/install/setup.bash ] && source /root/ros2_ws/install/setup.bash; echo "ROS_DOMAIN_ID=${ROS_DOMAIN_ID}"; echo "Run: ros2 topic list"; echo "Run: rviz2"; echo "Run: rqt"; exec bash' >/tmp/jetson-novnc/xterm.log 2>&1 &
 
 echo "noVNC is listening on port ${NOVNC_PORT}"
 if [ "${NOVNC_LISTEN_HOST}" = "127.0.0.1" ] || [ "${NOVNC_LISTEN_HOST}" = "localhost" ]; then
   echo "Secure mode is enabled. Use SSH tunnel, then open http://localhost:${NOVNC_PORT}/vnc.html"
 else
-  echo "Open http://<jetson-ip>:${NOVNC_PORT}/vnc.html from the local computer"
+  echo "Open http://<device-host>:${NOVNC_PORT}/vnc.html from the local computer"
 fi
 
 while sleep 5; do

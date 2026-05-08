@@ -21,14 +21,14 @@ export NOVNC_PORT="${NOVNC_PORT:-31880}"
 export VNC_PORT="${VNC_PORT:-31901}"
 export ROS_DOMAIN_ID="${ROS_DOMAIN_ID:-0}"
 export ROS_LOCALHOST_ONLY="${ROS_LOCALHOST_ONLY:-0}"
-export JETSON_ROS_SETUP="${JETSON_ROS_SETUP:-}"
+export ROS_SETUP="${ROS_SETUP:-${JETSON_ROS_SETUP:-}}"
 export LIBGL_ALWAYS_SOFTWARE="${LIBGL_ALWAYS_SOFTWARE:-1}"
 export QT_X11_NO_MITSHM="${QT_X11_NO_MITSHM:-1}"
 export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/tmp/runtime-${USER}}"
 
 if [ ! -f "/opt/ros/${ROS_DISTRO}/setup.bash" ]; then
   echo "Missing /opt/ros/${ROS_DISTRO}/setup.bash"
-  echo "Install ROS 2 ${ROS_DISTRO} on the Jetson first, or set ROS_DISTRO in .env."
+  echo "Install ROS 2 ${ROS_DISTRO} on the remote Ubuntu / ROS 2 device first, or set ROS_DISTRO in .env."
   exit 1
 fi
 
@@ -38,7 +38,7 @@ chmod 700 "$XDG_RUNTIME_DIR"
 for cmd in Xvfb fluxbox x11vnc websockify xterm; do
   if ! command -v "$cmd" >/dev/null 2>&1; then
     echo "Missing command: ${cmd}"
-    echo "Run: ./scripts/install-jetson-novnc-system.sh"
+    echo "Run: ./scripts/install-ros2-novnc-system.sh"
     exit 1
   fi
 done
@@ -46,14 +46,14 @@ done
 NOVNC_WEB_DIR=/usr/share/novnc
 if [ ! -f "${NOVNC_WEB_DIR}/vnc.html" ]; then
   echo "Missing ${NOVNC_WEB_DIR}/vnc.html"
-  echo "Run: ./scripts/install-jetson-novnc-system.sh"
+  echo "Run: ./scripts/install-ros2-novnc-system.sh"
   exit 1
 fi
 
 set +u
 source "/opt/ros/${ROS_DISTRO}/setup.bash"
-if [ -n "${JETSON_ROS_SETUP}" ] && [ -f "${JETSON_ROS_SETUP}" ]; then
-  source "${JETSON_ROS_SETUP}"
+if [ -n "${ROS_SETUP}" ] && [ -f "${ROS_SETUP}" ]; then
+  source "${ROS_SETUP}"
 fi
 if [ -f "${PROJECT_DIR}/ros2_ws/install/setup.bash" ]; then
   source "${PROJECT_DIR}/ros2_ws/install/setup.bash"
@@ -93,7 +93,7 @@ pids+=("$!")
 names+=("websockify")
 logs+=("${PROJECT_DIR}/logs/novnc.log")
 
-xterm -title "Jetson ROS 2" -geometry 132x36+20+20 -e bash -lc 'source /opt/ros/${ROS_DISTRO}/setup.bash; [ -n "${JETSON_ROS_SETUP}" ] && [ -f "${JETSON_ROS_SETUP}" ] && source "${JETSON_ROS_SETUP}"; [ -f "${PROJECT_DIR}/ros2_ws/install/setup.bash" ] && source "${PROJECT_DIR}/ros2_ws/install/setup.bash"; echo "ROS_DOMAIN_ID=${ROS_DOMAIN_ID}"; echo "Run: ros2 topic list"; echo "Run: rviz2"; echo "Run: rqt"; exec bash' >"${PROJECT_DIR}/logs/xterm.log" 2>&1 &
+xterm -title "ROS 2 Remote Desktop" -geometry 132x36+20+20 -e bash -lc 'source /opt/ros/${ROS_DISTRO}/setup.bash; [ -n "${ROS_SETUP}" ] && [ -f "${ROS_SETUP}" ] && source "${ROS_SETUP}"; [ -f "${PROJECT_DIR}/ros2_ws/install/setup.bash" ] && source "${PROJECT_DIR}/ros2_ws/install/setup.bash"; echo "ROS_DOMAIN_ID=${ROS_DOMAIN_ID}"; echo "Run: ros2 topic list"; echo "Run: rviz2"; echo "Run: rqt"; exec bash' >"${PROJECT_DIR}/logs/xterm.log" 2>&1 &
 
 sleep 2
 

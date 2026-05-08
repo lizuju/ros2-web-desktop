@@ -2,8 +2,8 @@
 set -euo pipefail
 
 if [ "$#" -lt 1 ] || [ "$#" -gt 3 ]; then
-  echo "Usage: $0 <user@jetson-ip> [local-port] [remote-port]"
-  echo "Example: $0 <jetson-user>@<jetson-ip>"
+  echo "Usage: $0 <user@device-host> [local-port] [remote-port]"
+  echo "Example: $0 <device-user>@<device-host>"
   exit 1
 fi
 

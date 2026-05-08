@@ -20,5 +20,5 @@ services:
       LIBGL_ALWAYS_SOFTWARE: "${LIBGL_ALWAYS_SOFTWARE:-1}"
       QT_X11_NO_MITSHM: "1"
     volumes:
-      - ${JETSON_ROS_WS:-./ros2_ws}:/root/ros2_ws
+      - ${ROS_WS:-./ros2_ws}:/root/ros2_ws
     restart: unless-stopped

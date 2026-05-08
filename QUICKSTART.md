@@ -1,15 +1,15 @@
 # Quick Start
 
-Use this to view Jetson `rviz2`, `rqt`, and terminal windows from any computer with a browser.
+Use this to view remote Ubuntu / ROS 2 `rviz2`, `rqt`, and terminal windows from any computer with a browser. It does not use X11 forwarding.
 
-## On the Jetson
+## On the Remote Ubuntu / ROS 2 Device
 
 Run this once:
 
 ```bash
 git clone -b ros2-humble https://github.com/lizuju/vnc-ros.git
 cd vnc-ros
-./scripts/setup-jetson-novnc-system.sh
+./scripts/setup-ros2-novnc-system.sh
 ```
 
 The setup script asks for `ROS_DOMAIN_ID`, the robot workspace setup file, and ports. Press Enter to accept the suggested values. The suggested ports are uncommon free ports, usually `31880` for noVNC and `31901` for the backend VNC server.
@@ -18,7 +18,7 @@ Start it:
 
 ```bash
 cd ~/vnc-ros
-./scripts/start-jetson-novnc-system.sh
+./scripts/start-ros2-novnc-system.sh
 ```
 
 Keep this terminal open.
@@ -28,13 +28,13 @@ Keep this terminal open.
 Open an SSH tunnel:
 
 ```bash
-ssh -N -L 18080:127.0.0.1:<NOVNC_PORT> <jetson-user>@<jetson-ip>
+ssh -N -L 18080:127.0.0.1:<NOVNC_PORT> <device-user>@<device-host>
 ```
 
 Example:
 
 ```bash
-ssh -N -L 18080:127.0.0.1:31880 <jetson-user>@<jetson-ip>
+ssh -N -L 18080:127.0.0.1:31880 <device-user>@<device-host>
 ```
 
 Keep this terminal open, then browse to:
@@ -54,7 +54,7 @@ rqt
 
 ## Change Settings Later
 
-Edit `.env` on the Jetson:
+Edit `.env` on the remote device:
 
 ```bash
 cd ~/vnc-ros
@@ -65,9 +65,9 @@ Common settings:
 
 ```bash
 ROS_DOMAIN_ID=7
-JETSON_ROS_SETUP=/home/<user>/<robot_ws>/install/setup.bash
+ROS_SETUP=/home/<user>/<robot_ws>/install/setup.bash
 NOVNC_PORT=31880
 VNC_PORT=31901
 ```
 
-Restart `./scripts/start-jetson-novnc-system.sh`.
+Restart `./scripts/start-ros2-novnc-system.sh`.
