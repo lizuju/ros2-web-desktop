@@ -1,0 +1,24 @@
+services:
+  jetson-novnc:
+    build:
+      context: .
+      dockerfile: Dockerfile.jetson-novnc
+    platform: linux/arm64
+    network_mode: host
+    ipc: host
+    shm_size: 1gb
+    environment:
+      DISPLAY: ":99"
+      DISPLAY_WIDTH: "${DISPLAY_WIDTH:-1440}"
+      DISPLAY_HEIGHT: "${DISPLAY_HEIGHT:-900}"
+      DISPLAY_DEPTH: "${DISPLAY_DEPTH:-24}"
+      NOVNC_LISTEN_HOST: "${NOVNC_LISTEN_HOST:-127.0.0.1}"
+      NOVNC_PORT: "${NOVNC_PORT:-8080}"
+      ROS_DOMAIN_ID: "${ROS_DOMAIN_ID:-0}"
+      ROS_LOCALHOST_ONLY: "0"
+      RMW_IMPLEMENTATION: "${RMW_IMPLEMENTATION:-rmw_fastrtps_cpp}"
+      LIBGL_ALWAYS_SOFTWARE: "${LIBGL_ALWAYS_SOFTWARE:-1}"
+      QT_X11_NO_MITSHM: "1"
+    volumes:
+      - ${JETSON_ROS_WS:-./ros2_ws}:/root/ros2_ws
+    restart: unless-stopped

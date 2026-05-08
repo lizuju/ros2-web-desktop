@@ -1,0 +1,60 @@
+FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    LANG=en_US.UTF-8 \
+    LC_ALL=en_US.UTF-8 \
+    ROS_DISTRO=humble
+
+SHELL ["/bin/bash", "-c"]
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    curl \
+    gnupg \
+    locales \
+    lsb-release \
+    software-properties-common \
+    && locale-gen en_US en_US.UTF-8 \
+    && update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8 \
+    && add-apt-repository universe \
+    && apt-get update \
+    && export ROS_APT_SOURCE_VERSION="$(curl -s https://api.github.com/repos/ros-infrastructure/ros-apt-source/releases/latest | grep -F tag_name | awk -F\" '{print $4}')" \
+    && curl -L -o /tmp/ros2-apt-source.deb "https://github.com/ros-infrastructure/ros-apt-source/releases/download/${ROS_APT_SOURCE_VERSION}/ros2-apt-source_${ROS_APT_SOURCE_VERSION}.$(. /etc/os-release && echo ${UBUNTU_CODENAME:-${VERSION_CODENAME}})_all.deb" \
+    && dpkg -i /tmp/ros2-apt-source.deb \
+    && rm -f /tmp/ros2-apt-source.deb \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
+    dbus-x11 \
+    fluxbox \
+    git \
+    htop \
+    iputils-ping \
+    libgl1-mesa-dri \
+    libglx-mesa0 \
+    mesa-utils \
+    nano \
+    net-tools \
+    novnc \
+    ros-dev-tools \
+    ros-humble-desktop \
+    ros-humble-rmw-cyclonedds-cpp \
+    ros-humble-rqt-common-plugins \
+    ros-humble-rqt-robot-plugins \
+    vim \
+    websockify \
+    wget \
+    x11vnc \
+    xterm \
+    xvfb \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN mkdir -p /root/ros2_ws/src \
+    && echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> /root/.bashrc \
+    && echo "[ -f /root/ros2_ws/install/setup.bash ] && source /root/ros2_ws/install/setup.bash" >> /root/.bashrc
+
+COPY scripts/start-jetson-novnc.sh /usr/local/bin/start-jetson-novnc
+RUN chmod +x /usr/local/bin/start-jetson-novnc
+
+WORKDIR /root/ros2_ws
+
+ENTRYPOINT ["/usr/local/bin/start-jetson-novnc"]
