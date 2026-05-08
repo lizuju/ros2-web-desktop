@@ -1,11 +1,11 @@
-# ros2-novnc-desktop | Ubuntu / ROS 2 noVNC Remote Desktop (No X11 Forwarding)
+# ros2-web-desktop | Ubuntu / ROS 2 noVNC Remote Desktop (No X11 Forwarding)
 
 <p align="left">
   <a href="README.md"><img src="https://img.shields.io/badge/切换语言-简体中文-blue" alt="简体中文"></a>
   <a href="README.en.md"><img src="https://img.shields.io/badge/Switch-English-blue" alt="English"></a>
 </p>
 
-`ros2-novnc-desktop` lets users view and operate ROS 2 GUI tools running on a remote Ubuntu / ROS 2 device from a browser on **macOS, Windows, or Linux**. It is designed for tools such as `rviz2`, `rqt`, `rqt_graph`, `rqt_image_view`, and a graphical terminal.
+`ros2-web-desktop` lets users view and operate ROS 2 GUI tools running on a remote Ubuntu / ROS 2 device from a browser on **macOS, Windows, or Linux**. It is designed for tools such as `rviz2`, `rqt`, `rqt_graph`, `rqt_image_view`, and a graphical terminal.
 
 The GUI applications run on the remote Ubuntu / ROS 2 device. The local computer only receives a browser-based noVNC desktop. The workflow does not use SSH X11 forwarding, which avoids the laggy X11 forwarding experience common on Apple Silicon Macs and cross-platform setups. The local computer does not need ROS 2, RViz, rqt, Docker, XQuartz, or a native VNC client.
 
@@ -61,8 +61,8 @@ Windows users can use PowerShell or Windows Terminal. If `ssh` is missing, enabl
 Run this on the remote Ubuntu / ROS 2 device:
 
 ```bash
-git clone -b ros2-humble https://github.com/<your-github-user>/ros2-novnc-desktop.git
-cd ros2-novnc-desktop
+git clone -b ros2-humble https://github.com/lizuju/ros2-web-desktop.git
+cd ros2-web-desktop
 ./scripts/setup-ros2-novnc-system.sh
 ```
 
@@ -97,7 +97,7 @@ Internal VNC backend port:
 ### 2. Start on the Remote Device
 
 ```bash
-cd ~/ros2-novnc-desktop
+cd ~/ros2-web-desktop
 ./scripts/start-ros2-novnc-system.sh
 ```
 
@@ -193,7 +193,7 @@ http://localhost:18081/vnc.html
 Edit `.env` on the remote device:
 
 ```bash
-cd ~/ros2-novnc-desktop
+cd ~/ros2-web-desktop
 nano .env
 ```
 
@@ -250,7 +250,7 @@ pkill -f Xvfb || true
 If the noVNC page does not open:
 
 ```bash
-cd ~/ros2-novnc-desktop
+cd ~/ros2-web-desktop
 ss -lntp | grep -E ':31880|:31901|:5900' || true
 tail -n 80 logs/novnc.log logs/x11vnc.log logs/xvfb.log
 ```

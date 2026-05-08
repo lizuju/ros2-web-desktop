@@ -1,11 +1,11 @@
-# ros2-novnc-desktop | Ubuntu / ROS 2 noVNC 远程桌面（无需 X11 转发）
+# ros2-web-desktop | Ubuntu / ROS 2 noVNC 远程桌面（无需 X11 转发）
 
 <p align="left">
   <a href="README.md"><img src="https://img.shields.io/badge/切换语言-简体中文-blue" alt="简体中文"></a>
   <a href="README.en.md"><img src="https://img.shields.io/badge/Switch-English-blue" alt="English"></a>
 </p>
 
-`ros2-novnc-desktop` 可以让用户在 **macOS、Windows、Linux** 的浏览器里查看和操作远程 Ubuntu / ROS 2 设备上的图形工具，例如 `rviz2`、`rqt`、`rqt_graph`、`rqt_image_view` 和图形终端。
+`ros2-web-desktop` 可以让用户在 **macOS、Windows、Linux** 的浏览器里查看和操作远程 Ubuntu / ROS 2 设备上的图形工具，例如 `rviz2`、`rqt`、`rqt_graph`、`rqt_image_view` 和图形终端。
 
 图形程序实际运行在远程 Ubuntu / ROS 2 设备上，本地电脑只接收 noVNC 网页画面。整个流程无需 SSH X11 转发，因此可以避开 X11 转发在 Apple Silicon Mac 或跨平台环境里的卡顿问题；本地电脑也不需要安装 ROS 2、RViz、rqt、Docker、XQuartz 或 VNC 客户端。
 
@@ -61,8 +61,8 @@ Windows 用户可以使用 PowerShell 或 Windows Terminal。若系统没有 `ss
 在远程 Ubuntu / ROS 2 设备上运行：
 
 ```bash
-git clone -b ros2-humble https://github.com/<your-github-user>/ros2-novnc-desktop.git
-cd ros2-novnc-desktop
+git clone -b ros2-humble https://github.com/lizuju/ros2-web-desktop.git
+cd ros2-web-desktop
 ./scripts/setup-ros2-novnc-system.sh
 ```
 
@@ -97,7 +97,7 @@ Internal VNC backend port:
 ### 2. 远程设备每次启动
 
 ```bash
-cd ~/ros2-novnc-desktop
+cd ~/ros2-web-desktop
 ./scripts/start-ros2-novnc-system.sh
 ```
 
@@ -193,7 +193,7 @@ http://localhost:18081/vnc.html
 在远程设备上编辑 `.env`：
 
 ```bash
-cd ~/ros2-novnc-desktop
+cd ~/ros2-web-desktop
 nano .env
 ```
 
@@ -250,7 +250,7 @@ pkill -f Xvfb || true
 页面打不开：
 
 ```bash
-cd ~/ros2-novnc-desktop
+cd ~/ros2-web-desktop
 ss -lntp | grep -E ':31880|:31901|:5900' || true
 tail -n 80 logs/novnc.log logs/x11vnc.log logs/xvfb.log
 ```
