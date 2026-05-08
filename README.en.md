@@ -1,0 +1,272 @@
+# vnc-ros | Jetson noVNC ROS 2 Desktop
+
+[中文](README.zh-CN.md)
+
+`vnc-ros` lets users view and operate ROS 2 GUI tools running on a remote Jetson from a browser on **macOS, Windows, or Linux**. It is designed for tools such as `rviz2`, `rqt`, `rqt_graph`, `rqt_image_view`, and a graphical Jetson terminal.
+
+The GUI applications run on the Jetson. The local computer only receives a browser-based noVNC desktop. This avoids slow SSH X11 forwarding and does not require ROS 2, RViz, rqt, Docker, XQuartz, or a native VNC client on the local computer.
+
+![noVNC connect screen](docs/images/novnc-connect.png)
+
+![RViz2 running in the browser](docs/images/rviz2-browser.png)
+
+## What This Helps With
+
+- View Jetson RViz2 / rqt from an Apple Silicon Mac without X11 forwarding.
+- Use the same browser workflow from Windows or Linux.
+- Let users inspect robot state, topics, tf, maps, point clouds, and GUI tools without installing ROS locally.
+- Access noVNC through an SSH tunnel by default, so the Jetson noVNC port is not exposed directly to the LAN.
+
+## How It Works
+
+The Jetson starts a lightweight virtual desktop:
+
+- `Xvfb` provides a virtual display
+- `fluxbox` provides a window manager
+- `x11vnc` exposes the virtual desktop as VNC
+- `websockify` / noVNC exposes VNC as a browser page
+- `rviz2`, `rqt`, and other GUI tools run locally on the Jetson
+
+In the default secure mode, noVNC listens only on the Jetson's `127.0.0.1`. The local computer connects through an SSH tunnel:
+
+```text
+local browser -> localhost:18080 -> SSH tunnel -> Jetson 127.0.0.1:<NOVNC_PORT>
+```
+
+## Jetson Requirements
+
+- Ubuntu with ROS 2 installed, usually Ubuntu 22.04 + ROS 2 Humble
+- SSH enabled
+- `sudo apt-get` access
+- the robot workspace `install/setup.bash` path, if custom messages, launch files, or robot packages are needed
+
+## Local Computer Requirements
+
+macOS / Linux / Windows are all supported.
+
+The local computer only needs:
+
+- a browser
+- the `ssh` command
+- network access to the Jetson
+
+Windows users can use PowerShell or Windows Terminal. If `ssh` is missing, enable OpenSSH Client.
+
+## Quick Start
+
+### 1. First-Time Setup on the Jetson
+
+Run this on the Jetson:
+
+```bash
+git clone -b ros2-humble https://github.com/lizuju/vnc-ros.git
+cd vnc-ros
+./scripts/setup-jetson-novnc-system.sh
+```
+
+The setup script will:
+
+- create `.env`
+- ask for `ROS_DOMAIN_ID`
+- ask for the robot workspace setup file, such as `/home/<user>/<robot_ws>/install/setup.bash`
+- suggest uncommon free ports, usually starting from `31880` and `31901`
+- validate port values and avoid occupied/conflicting ports
+- install noVNC, Xvfb, x11vnc, fluxbox, xterm, and related dependencies
+- print the SSH tunnel command to run on the local computer
+
+Prompt guidance:
+
+```text
+ROS_DOMAIN_ID:
+  Use the same ROS 2 domain ID as the robot. If unsure, start with 0.
+
+Absolute robot workspace setup file:
+  Enter the absolute setup path if the robot workspace needs sourcing.
+  Example: /home/<user>/<robot_ws>/install/setup.bash
+  Press Enter if not needed.
+
+noVNC web port:
+  The Jetson noVNC web port. Press Enter to accept the suggested free port.
+
+Internal VNC backend port:
+  The Jetson internal VNC backend port. Press Enter to accept the suggested free port.
+```
+
+### 2. Start on the Jetson
+
+```bash
+cd ~/vnc-ros
+./scripts/start-jetson-novnc-system.sh
+```
+
+Keep this terminal open. When you see output like this, the Jetson side is running:
+
+```text
+noVNC is listening on port 31880
+Secure mode is enabled. Use SSH tunnel, then open http://localhost:31880/vnc.html
+Press Ctrl+C here to stop it.
+```
+
+Do not open the printed `localhost:31880` directly from your local browser. That address is local to the Jetson. Open an SSH tunnel from the local computer first.
+
+### 3. Open an SSH Tunnel from the Local Computer
+
+Run this on macOS, Linux, or Windows PowerShell:
+
+```bash
+ssh -N -L 18080:127.0.0.1:<NOVNC_PORT> <jetson-user>@<jetson-ip>
+```
+
+If setup printed `NOVNC_PORT=31880`, the command looks like:
+
+```bash
+ssh -N -L 18080:127.0.0.1:31880 <jetson-user>@<jetson-ip>
+```
+
+After entering the Jetson password, the terminal will stay open. That is expected. Do not close it.
+
+### 4. Open the Browser
+
+Open:
+
+```text
+http://localhost:18080/vnc.html
+```
+
+Click **Connect** to enter the Jetson graphical desktop.
+
+## Common Commands
+
+Run these inside the browser desktop terminal:
+
+```bash
+ros2 topic list
+ros2 node list
+rviz2
+rqt
+rqt_graph
+rqt_image_view
+```
+
+These commands run on the Jetson, and GUI windows appear inside the browser noVNC desktop.
+
+## Port Reference
+
+SSH tunnel format:
+
+```bash
+ssh -N -L local-port:127.0.0.1:jetson-port user@jetson-address
+```
+
+Example:
+
+```bash
+ssh -N -L 18080:127.0.0.1:31880 <jetson-user>@<jetson-ip>
+```
+
+- `18080` is the local computer port. Open `localhost:18080` in the browser.
+- `31880` is the Jetson noVNC port. Setup writes it to `.env` as `NOVNC_PORT`.
+- Neither port is fixed. If local port `18080` is occupied, use another local port such as `18081`.
+
+Example with local port `18081`:
+
+```bash
+ssh -N -L 18081:127.0.0.1:31880 <jetson-user>@<jetson-ip>
+```
+
+Then open:
+
+```text
+http://localhost:18081/vnc.html
+```
+
+## Change Configuration
+
+Edit `.env` on the Jetson:
+
+```bash
+cd ~/vnc-ros
+nano .env
+```
+
+Common settings:
+
+```bash
+ROS_DOMAIN_ID=7
+JETSON_ROS_SETUP=/home/<user>/<robot_ws>/install/setup.bash
+NOVNC_LISTEN_HOST=127.0.0.1
+NOVNC_PORT=31880
+VNC_PORT=31901
+```
+
+Restart after changing `.env`:
+
+```bash
+./scripts/start-jetson-novnc-system.sh
+```
+
+## Direct LAN Access
+
+Direct LAN access is disabled by default. If you intentionally want other machines on the same LAN to open the Jetson URL directly, set this in `.env` on the Jetson:
+
+```bash
+NOVNC_LISTEN_HOST=0.0.0.0
+```
+
+Restart the service, then open:
+
+```text
+http://<jetson-ip>:<NOVNC_PORT>/vnc.html
+```
+
+Warning: anyone on the trusted LAN who knows the address and port may be able to access the desktop.
+
+## Stop the Service
+
+Press this in the Jetson terminal running `start-jetson-novnc-system.sh`:
+
+```text
+Ctrl+C
+```
+
+If ports remain occupied after an abnormal exit:
+
+```bash
+pkill -f websockify || true
+pkill -f x11vnc || true
+pkill -f Xvfb || true
+```
+
+## Troubleshooting
+
+If the noVNC page does not open:
+
+```bash
+cd ~/vnc-ros
+ss -lntp | grep -E ':31880|:31901|:5900' || true
+tail -n 80 logs/novnc.log logs/x11vnc.log logs/xvfb.log
+```
+
+If the page opens but **Connect** fails:
+
+- the backend VNC port is often occupied
+- change `VNC_PORT` in `.env`
+- restart `./scripts/start-jetson-novnc-system.sh`
+
+If `rviz2` cannot see robot topics:
+
+- verify `ROS_DOMAIN_ID`
+- verify `JETSON_ROS_SETUP`
+- run `ros2 topic list` inside the browser terminal
+
+If `ssh -L` reports `Address already in use`:
+
+- change the local port, for example from `18080` to `18081`
+- open the matching browser URL, such as `http://localhost:18081/vnc.html`
+
+## Additional Documents
+
+- [QUICKSTART.md](QUICKSTART.md)
+- [LOCAL_TUNNEL.md](LOCAL_TUNNEL.md)
+- [JETSON_NOVNC.md](JETSON_NOVNC.md)
+- [DISTRIBUTING_JETSON_NOVNC.md](DISTRIBUTING_JETSON_NOVNC.md)

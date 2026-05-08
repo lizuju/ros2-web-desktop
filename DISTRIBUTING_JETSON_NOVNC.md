@@ -30,7 +30,7 @@ cd vnc-ros
 The setup script asks for the robot-specific values and writes `.env`:
 
 ```bash
-JETSON_ROS_SETUP=/home/wheeltec/wheeltec_ros2/install/setup.bash
+JETSON_ROS_SETUP=/home/<user>/<robot_ws>/install/setup.bash
 ROS_DOMAIN_ID=0
 VNC_PORT=31901
 NOVNC_PORT=31880

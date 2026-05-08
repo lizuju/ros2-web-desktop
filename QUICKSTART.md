@@ -34,7 +34,7 @@ ssh -N -L 18080:127.0.0.1:<NOVNC_PORT> <jetson-user>@<jetson-ip>
 Example:
 
 ```bash
-ssh -N -L 18080:127.0.0.1:31880 wheeltec@192.168.124.162
+ssh -N -L 18080:127.0.0.1:31880 <jetson-user>@<jetson-ip>
 ```
 
 Keep this terminal open, then browse to:
@@ -65,7 +65,7 @@ Common settings:
 
 ```bash
 ROS_DOMAIN_ID=7
-JETSON_ROS_SETUP=/home/wheeltec/wheeltec_ros2/install/setup.bash
+JETSON_ROS_SETUP=/home/<user>/<robot_ws>/install/setup.bash
 NOVNC_PORT=31880
 VNC_PORT=31901
 ```

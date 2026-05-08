@@ -15,7 +15,7 @@ cd ~/vnc-ros
 On the local computer:
 
 ```bash
-./scripts/open-jetson-novnc-tunnel.sh wheeltec@192.168.124.162
+./scripts/open-jetson-novnc-tunnel.sh <jetson-user>@<jetson-ip>
 ```
 
 Keep that terminal open, then browse to:
@@ -27,7 +27,7 @@ http://localhost:18080/vnc.html
 If the local computer does not have this repository, run the raw SSH command:
 
 ```bash
-ssh -N -L 127.0.0.1:18080:127.0.0.1:31880 wheeltec@192.168.124.162
+ssh -N -L 127.0.0.1:18080:127.0.0.1:31880 <jetson-user>@<jetson-ip>
 ```
 
 ## Windows PowerShell
@@ -35,7 +35,7 @@ ssh -N -L 127.0.0.1:18080:127.0.0.1:31880 wheeltec@192.168.124.162
 On the local computer:
 
 ```powershell
-.\scripts\open-jetson-novnc-tunnel.ps1 wheeltec@192.168.124.162
+.\scripts\open-jetson-novnc-tunnel.ps1 <jetson-user>@<jetson-ip>
 ```
 
 Keep that PowerShell window open, then browse to:
@@ -47,7 +47,7 @@ http://localhost:18080/vnc.html
 If PowerShell blocks script execution, run the raw SSH command instead:
 
 ```powershell
-ssh -N -L 127.0.0.1:18080:127.0.0.1:31880 wheeltec@192.168.124.162
+ssh -N -L 127.0.0.1:18080:127.0.0.1:31880 <jetson-user>@<jetson-ip>
 ```
 
 ## Custom Ports
@@ -55,7 +55,7 @@ ssh -N -L 127.0.0.1:18080:127.0.0.1:31880 wheeltec@192.168.124.162
 If `18080` is already used locally:
 
 ```bash
-./scripts/open-jetson-novnc-tunnel.sh wheeltec@192.168.124.162 18081 31880
+./scripts/open-jetson-novnc-tunnel.sh <jetson-user>@<jetson-ip> 18081 31880
 ```
 
 Open:

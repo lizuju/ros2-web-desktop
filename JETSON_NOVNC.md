@@ -31,13 +31,13 @@ By default, noVNC listens only on the Jetson's `127.0.0.1`, so use an SSH tunnel
 On macOS or Linux:
 
 ```bash
-./scripts/open-jetson-novnc-tunnel.sh wheeltec@192.168.124.162
+./scripts/open-jetson-novnc-tunnel.sh <jetson-user>@<jetson-ip>
 ```
 
 On Windows PowerShell:
 
 ```powershell
-.\scripts\open-jetson-novnc-tunnel.ps1 wheeltec@192.168.124.162
+.\scripts\open-jetson-novnc-tunnel.ps1 <jetson-user>@<jetson-ip>
 ```
 
 Then open this from the local computer:
@@ -67,7 +67,7 @@ ROS_DOMAIN_ID=7
 If the robot has a custom workspace, point `.env` at its setup file:
 
 ```bash
-JETSON_ROS_SETUP=/home/wheeltec/wheeltec_ros2/install/setup.bash
+JETSON_ROS_SETUP=/home/<user>/<robot_ws>/install/setup.bash
 ```
 
 ## Custom Messages or Workspaces
@@ -75,7 +75,7 @@ JETSON_ROS_SETUP=/home/wheeltec/wheeltec_ros2/install/setup.bash
 If `rviz2` or `rqt` needs custom messages from the robot workspace, point `JETSON_ROS_WS` at that workspace before starting:
 
 ```bash
-JETSON_ROS_WS=/home/wheeltec/wheeltec_ros2
+JETSON_ROS_WS=/home/<user>/<robot_ws>
 docker compose -f docker-compose.jetson-novnc.yml up --build
 ```
 
@@ -92,7 +92,7 @@ source install/setup.bash
 Secure mode is the default. It tunnels only the web page:
 
 ```bash
-ssh -L 18080:127.0.0.1:31880 wheeltec@<jetson-ip>
+ssh -L 18080:127.0.0.1:31880 <jetson-user>@<jetson-ip>
 ```
 
 Then open:
