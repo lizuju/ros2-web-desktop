@@ -10,15 +10,15 @@
 图形程序实际运行在远程 Ubuntu / ROS 2 设备上，本地电脑只接收 noVNC 网页画面。整个流程无需 SSH X11 转发，因此可以避开 X11 转发在 Apple Silicon Mac 或跨平台环境里的卡顿问题；本地电脑也不需要安装 ROS 2、RViz、rqt、Docker、XQuartz 或 VNC 客户端。
 
 <p align="center">
-  <img src="docs/images/novnc-connect.png" alt="noVNC 连接页面" width="760">
+  <img src="docs/images/novnc-connect.png" alt="noVNC 连接页面" width="600">
 </p>
 
 <p align="center">
-  <img src="docs/images/multiple-terminals.png" alt="网页桌面中打开多个终端" width="760">
+  <img src="docs/images/multiple-terminals.png" alt="网页桌面中打开多个终端" width="600">
 </p>
 
 <p align="center">
-  <img src="docs/images/rviz2-browser.png" alt="浏览器中的 RViz2" width="760">
+  <img src="docs/images/rviz2-browser.png" alt="浏览器中的 RViz2" width="600">
 </p>
 
 ## 适合解决什么问题

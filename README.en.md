@@ -10,15 +10,15 @@
 The GUI applications run on the remote Ubuntu / ROS 2 device. The local computer only receives a browser-based noVNC desktop. The workflow does not use SSH X11 forwarding, which avoids the laggy X11 forwarding experience common on Apple Silicon Macs and cross-platform setups. The local computer does not need ROS 2, RViz, rqt, Docker, XQuartz, or a native VNC client.
 
 <p align="center">
-  <img src="docs/images/novnc-connect.png" alt="noVNC connect screen" width="760">
+  <img src="docs/images/novnc-connect.png" alt="noVNC connect screen" width="600">
 </p>
 
 <p align="center">
-  <img src="docs/images/multiple-terminals.png" alt="Multiple terminal windows in the browser desktop" width="760">
+  <img src="docs/images/multiple-terminals.png" alt="Multiple terminal windows in the browser desktop" width="600">
 </p>
 
 <p align="center">
-  <img src="docs/images/rviz2-browser.png" alt="RViz2 running in the browser" width="760">
+  <img src="docs/images/rviz2-browser.png" alt="RViz2 running in the browser" width="600">
 </p>
 
 ## What This Helps With
