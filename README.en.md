@@ -69,9 +69,9 @@ Windows users can use PowerShell or Windows Terminal. If `ssh` is missing, enabl
 For normal users, download the Release archive. Git is not required:
 
 ```bash
-wget https://github.com/lizuju/ros2-web-desktop/releases/download/v0.1.1/ros2-web-desktop-v0.1.1.tar.gz
-tar -xzf ros2-web-desktop-v0.1.1.tar.gz
-cd ros2-web-desktop-v0.1.1
+wget https://github.com/lizuju/ros2-web-desktop/releases/download/v0.1.2/ros2-web-desktop.tar.gz
+tar -xzf ros2-web-desktop.tar.gz
+cd ros2-web-desktop
 ./scripts/setup-ros2-novnc-system.sh
 ```
 
@@ -91,7 +91,7 @@ The setup script will:
 - suggest uncommon free ports, usually starting from `31880` and `31901`
 - validate port values and avoid occupied/conflicting ports
 - install noVNC, Xvfb, x11vnc, fluxbox, xterm, and related dependencies
-- print the SSH tunnel command to run on the local computer
+- print the doctor, start, and SSH tunnel commands
 
 Prompt guidance:
 
@@ -111,7 +111,18 @@ Internal VNC backend port:
   The remote device internal VNC backend port. Press Enter to accept the suggested free port.
 ```
 
-### 2. Start on the Remote Device
+### 2. Check the Remote Device
+
+After first-time setup, or whenever a connection fails, run:
+
+```bash
+cd ~/ros2-web-desktop
+./scripts/doctor-ros2-novnc-system.sh
+```
+
+`doctor` only checks ROS 2, dependencies, ports, DISPLAY, and noVNC status. It does not start `rviz2` and does not add GPU load on the remote device. If you see `FAIL`, follow the printed suggestion. `WARN` usually means the service has not been started yet.
+
+### 3. Start on the Remote Device
 
 ```bash
 cd ~/ros2-web-desktop
@@ -128,9 +139,29 @@ Press Ctrl+C here to stop it.
 
 Do not open the printed `localhost:31880` directly from your local browser. That address is local to the remote device. Open an SSH tunnel from the local computer first.
 
-### 3. Open an SSH Tunnel from the Local Computer
+### 4. Open an SSH Tunnel from the Local Computer
 
-Run this on macOS, Linux, or Windows PowerShell:
+Use the project helper when possible. It reads `NOVNC_PORT` from remote `~/ros2-web-desktop/.env`, chooses a free local port starting from `18080`, and opens the browser after the tunnel is ready.
+
+macOS / Linux:
+
+```bash
+./scripts/open-ros2-novnc-tunnel.sh <device-user>@<device-host>
+```
+
+Windows PowerShell:
+
+```powershell
+.\scripts\open-ros2-novnc-tunnel.ps1 <device-user>@<device-host>
+```
+
+If the remote project is not in `~/ros2-web-desktop`, set the directory:
+
+```bash
+REMOTE_PROJECT_DIR=/path/to/ros2-web-desktop ./scripts/open-ros2-novnc-tunnel.sh <device-user>@<device-host>
+```
+
+You can also run the SSH tunnel manually:
 
 ```bash
 ssh -N -L 18080:127.0.0.1:<NOVNC_PORT> <device-user>@<device-host>
@@ -144,15 +175,9 @@ ssh -N -L 18080:127.0.0.1:31880 <device-user>@<device-host>
 
 After entering the remote device user's password, the terminal will stay open. That is expected. Do not close it.
 
-You can also use the project tunnel helper:
+### 5. Open the Browser
 
-```bash
-./scripts/open-ros2-novnc-tunnel.sh <device-user>@<device-host>
-```
-
-### 4. Open the Browser
-
-Open:
+If the browser does not open automatically, open the URL printed by the tunnel helper, for example:
 
 ```text
 http://localhost:18080/vnc.html
@@ -292,13 +317,13 @@ If the noVNC page does not open:
 
 ```bash
 cd ~/ros2-web-desktop
-ss -lntp | grep -E ':31880|:31901|:5900' || true
-tail -n 80 logs/novnc.log logs/x11vnc.log logs/xvfb.log
+./scripts/doctor-ros2-novnc-system.sh
 ```
 
 If the page opens but **Connect** fails:
 
 - the backend VNC port is often occupied
+- first run `./scripts/doctor-ros2-novnc-system.sh` to check whether `VNC_PORT` is occupied by another process
 - change `VNC_PORT` in `.env`
 - restart `./scripts/start-ros2-novnc-system.sh`
 
@@ -310,5 +335,5 @@ If `rviz2` cannot see robot topics:
 
 If `ssh -L` reports `Address already in use`:
 
-- change the local port, for example from `18080` to `18081`
-- open the matching browser URL, such as `http://localhost:18081/vnc.html`
+- prefer `./scripts/open-ros2-novnc-tunnel.sh <device-user>@<device-host>`; it automatically chooses a free local port
+- if you write `ssh -L` manually, change the local port, for example from `18080` to `18081`

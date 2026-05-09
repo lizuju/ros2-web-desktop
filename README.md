@@ -69,9 +69,9 @@ Windows 用户可以使用 PowerShell 或 Windows Terminal。若系统没有 `ss
 普通用户可以直接下载 Release 压缩包，不需要安装 Git：
 
 ```bash
-wget https://github.com/lizuju/ros2-web-desktop/releases/download/v0.1.1/ros2-web-desktop-v0.1.1.tar.gz
-tar -xzf ros2-web-desktop-v0.1.1.tar.gz
-cd ros2-web-desktop-v0.1.1
+wget https://github.com/lizuju/ros2-web-desktop/releases/download/v0.1.2/ros2-web-desktop.tar.gz
+tar -xzf ros2-web-desktop.tar.gz
+cd ros2-web-desktop
 ./scripts/setup-ros2-novnc-system.sh
 ```
 
@@ -91,7 +91,7 @@ cd ros2-web-desktop
 - 自动推荐不常见且未占用的端口，通常从 `31880` 和 `31901` 开始找
 - 检查端口是否有效、是否被占用、两个端口是否冲突
 - 安装 noVNC、Xvfb、x11vnc、fluxbox、xterm 等依赖
-- 最后输出本地电脑需要执行的 SSH 隧道命令
+- 最后输出自检、启动和 SSH 隧道命令
 
 提示项说明：
 
@@ -111,7 +111,18 @@ Internal VNC backend port:
   远程设备内部 VNC 后端端口。建议直接回车使用推荐值。
 ```
 
-### 2. 远程设备每次启动
+### 2. 远程设备自检
+
+第一次配置后，或连接异常时，先运行：
+
+```bash
+cd ~/ros2-web-desktop
+./scripts/doctor-ros2-novnc-system.sh
+```
+
+`doctor` 只检查 ROS 2、依赖、端口、DISPLAY 和 noVNC 状态，不启动 `rviz2`，也不会增加远程设备的 GPU 负载。看到 `FAIL` 时，按输出的建议处理；只有 `WARN` 通常表示服务还没启动。
+
+### 3. 远程设备每次启动
 
 ```bash
 cd ~/ros2-web-desktop
@@ -128,9 +139,29 @@ Press Ctrl+C here to stop it.
 
 注意：这里的 `localhost:31880` 是远程设备自己的本地地址，不是你本地电脑的浏览器地址。本地电脑需要先开 SSH 隧道。
 
-### 3. 本地电脑打开 SSH 隧道
+### 4. 本地电脑打开 SSH 隧道
 
-在 macOS、Linux 或 Windows PowerShell 中运行：
+推荐使用项目自带脚本。它会从远程 `~/ros2-web-desktop/.env` 自动读取 `NOVNC_PORT`，从 `18080` 开始自动选择本地未占用端口，并在隧道就绪后打开浏览器。
+
+macOS / Linux：
+
+```bash
+./scripts/open-ros2-novnc-tunnel.sh <device-user>@<device-host>
+```
+
+Windows PowerShell：
+
+```powershell
+.\scripts\open-ros2-novnc-tunnel.ps1 <device-user>@<device-host>
+```
+
+如果远程项目不在 `~/ros2-web-desktop`，可以指定路径：
+
+```bash
+REMOTE_PROJECT_DIR=/path/to/ros2-web-desktop ./scripts/open-ros2-novnc-tunnel.sh <device-user>@<device-host>
+```
+
+也可以手动运行 SSH 隧道：
 
 ```bash
 ssh -N -L 18080:127.0.0.1:<NOVNC_PORT> <device-user>@<device-host>
@@ -144,15 +175,9 @@ ssh -N -L 18080:127.0.0.1:31880 <device-user>@<device-host>
 
 输入远程设备用户密码后，终端停住是正常的。保持这个终端不要关闭。
 
-也可以使用项目自带脚本打开隧道：
+### 5. 浏览器访问
 
-```bash
-./scripts/open-ros2-novnc-tunnel.sh <device-user>@<device-host>
-```
-
-### 4. 浏览器访问
-
-打开：
+如果没有自动打开浏览器，手动打开脚本输出的地址，例如：
 
 ```text
 http://localhost:18080/vnc.html
@@ -292,13 +317,13 @@ cd ~/ros2-web-desktop
 
 ```bash
 cd ~/ros2-web-desktop
-ss -lntp | grep -E ':31880|:31901|:5900' || true
-tail -n 80 logs/novnc.log logs/x11vnc.log logs/xvfb.log
+./scripts/doctor-ros2-novnc-system.sh
 ```
 
 页面能打开但点击 Connect 失败：
 
 - 通常是后端 VNC 端口冲突
+- 先运行 `./scripts/doctor-ros2-novnc-system.sh` 查看 `VNC_PORT` 是否被其它进程占用
 - 修改 `.env` 里的 `VNC_PORT`
 - 重启 `./scripts/start-ros2-novnc-system.sh`
 
@@ -310,5 +335,5 @@ tail -n 80 logs/novnc.log logs/x11vnc.log logs/xvfb.log
 
 本地 `ssh -L` 提示 `Address already in use`：
 
-- 换一个本地端口，例如从 `18080` 改成 `18081`
-- 浏览器也对应打开 `http://localhost:18081/vnc.html`
+- 优先使用 `./scripts/open-ros2-novnc-tunnel.sh <device-user>@<device-host>`，脚本会自动选择空闲本地端口
+- 如果手动写 `ssh -L`，换一个本地端口，例如从 `18080` 改成 `18081`

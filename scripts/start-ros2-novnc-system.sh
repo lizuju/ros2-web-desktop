@@ -26,9 +26,14 @@ export LIBGL_ALWAYS_SOFTWARE="${LIBGL_ALWAYS_SOFTWARE:-1}"
 export QT_X11_NO_MITSHM="${QT_X11_NO_MITSHM:-1}"
 export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/tmp/runtime-${USER}}"
 
+doctor_hint() {
+  echo "Run ./scripts/doctor-ros2-novnc-system.sh for a full startup check."
+}
+
 if [ ! -f "/opt/ros/${ROS_DISTRO}/setup.bash" ]; then
   echo "Missing /opt/ros/${ROS_DISTRO}/setup.bash"
   echo "Install ROS 2 ${ROS_DISTRO} on the remote Ubuntu / ROS 2 device first, or set ROS_DISTRO in .env."
+  doctor_hint
   exit 1
 fi
 
@@ -46,6 +51,7 @@ if port_owner_lines "$NOVNC_PORT" | grep -q .; then
   echo "NOVNC_PORT=${NOVNC_PORT} is already in use:"
   port_owner_lines "$NOVNC_PORT"
   echo "Run ./scripts/stop-ros2-novnc-system.sh to stop this project's old processes, or choose another NOVNC_PORT in .env."
+  doctor_hint
   exit 1
 fi
 
@@ -53,6 +59,7 @@ if port_owner_lines "$VNC_PORT" | grep -q .; then
   echo "VNC_PORT=${VNC_PORT} is already in use:"
   port_owner_lines "$VNC_PORT"
   echo "Run ./scripts/stop-ros2-novnc-system.sh to stop this project's old processes, or choose another VNC_PORT in .env."
+  doctor_hint
   exit 1
 fi
 
@@ -60,6 +67,7 @@ for cmd in Xvfb fluxbox x11vnc websockify xterm; do
   if ! command -v "$cmd" >/dev/null 2>&1; then
     echo "Missing command: ${cmd}"
     echo "Run: ./scripts/install-ros2-novnc-system.sh"
+    doctor_hint
     exit 1
   fi
 done
@@ -68,6 +76,7 @@ NOVNC_WEB_DIR=/usr/share/novnc
 if [ ! -f "${NOVNC_WEB_DIR}/vnc.html" ]; then
   echo "Missing ${NOVNC_WEB_DIR}/vnc.html"
   echo "Run: ./scripts/install-ros2-novnc-system.sh"
+  doctor_hint
   exit 1
 fi
 
@@ -85,6 +94,30 @@ pids=()
 names=()
 logs=()
 xterm_pid=""
+
+print_component_failure() {
+  local name="$1"
+  local log_file="$2"
+
+  echo "${name} exited. Recent log:"
+  tail -80 "$log_file" 2>/dev/null || true
+  echo
+  case "$name" in
+    Xvfb)
+      echo "Check DISPLAY=${DISPLAY} and whether another Xvfb is already using it."
+      ;;
+    x11vnc)
+      echo "Check VNC_PORT=${VNC_PORT}, DISPLAY=${DISPLAY}, and whether Xvfb is running."
+      ;;
+    websockify)
+      echo "Check NOVNC_PORT=${NOVNC_PORT} and VNC_PORT=${VNC_PORT}."
+      ;;
+    xterm)
+      echo "Check ROS_DISTRO=${ROS_DISTRO}, ROS_SETUP=${ROS_SETUP}, and xterm availability."
+      ;;
+  esac
+  doctor_hint
+}
 
 cleanup() {
   local cleanup_pids=("${pids[@]}")
@@ -136,6 +169,19 @@ record_pid xterm "$xterm_pid"
 
 sleep 2
 
+for i in "${!pids[@]}"; do
+  pid="${pids[$i]}"
+  if ! kill -0 "$pid" 2>/dev/null; then
+    print_component_failure "${names[$i]}" "${logs[$i]}"
+    exit 1
+  fi
+done
+
+if ! kill -0 "$xterm_pid" 2>/dev/null; then
+  print_component_failure xterm "${PROJECT_DIR}/logs/xterm.log"
+  exit 1
+fi
+
 echo "noVNC is listening on port ${NOVNC_PORT}"
 if [ "${NOVNC_LISTEN_HOST}" = "127.0.0.1" ] || [ "${NOVNC_LISTEN_HOST}" = "localhost" ]; then
   echo "Secure mode is enabled. Use SSH tunnel, then open http://localhost:${NOVNC_PORT}/vnc.html"
@@ -148,8 +194,7 @@ while sleep 5; do
   for i in "${!pids[@]}"; do
     pid="${pids[$i]}"
     if ! kill -0 "$pid" 2>/dev/null; then
-      echo "${names[$i]} exited. Recent log:"
-      tail -80 "${logs[$i]}" 2>/dev/null || true
+      print_component_failure "${names[$i]}" "${logs[$i]}"
       exit 1
     fi
   done
