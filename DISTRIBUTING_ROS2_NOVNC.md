@@ -22,8 +22,8 @@ For normal users, [QUICKSTART.md](QUICKSTART.md) is the shortest path.
 Get the project onto the remote device by cloning your published repo or copying the folder:
 
 ```bash
-git clone -b ros2-humble https://github.com/lizuju/vnc-ros.git
-cd vnc-ros
+git clone -b ros2-humble https://github.com/lizuju/ros2-web-desktop.git
+cd ros2-web-desktop
 ./scripts/setup-ros2-novnc-system.sh
 ```
 
@@ -40,7 +40,7 @@ NOVNC_LISTEN_HOST=127.0.0.1
 ## Start on the Remote Device
 
 ```bash
-cd ~/vnc-ros
+cd ~/ros2-web-desktop
 ./scripts/start-ros2-novnc-system.sh
 ```
 

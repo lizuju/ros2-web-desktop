@@ -6,7 +6,7 @@ It prevents other machines on the LAN from opening the remote noVNC port directl
 The remote Ubuntu / ROS 2 device must already be running:
 
 ```bash
-cd ~/vnc-ros
+cd ~/ros2-web-desktop
 ./scripts/start-ros2-novnc-system.sh
 ```
 

@@ -13,7 +13,7 @@ For local SSH tunnel commands on macOS, Linux, and Windows, see [LOCAL_TUNNEL.md
 Use this path if `docker` is not installed on the remote device. For first-time setup:
 
 ```bash
-cd vnc-ros
+cd ros2-web-desktop
 ./scripts/setup-ros2-novnc-system.sh
 ./scripts/start-ros2-novnc-system.sh
 ```
@@ -21,7 +21,7 @@ cd vnc-ros
 ### With Docker
 
 ```bash
-cd vnc-ros
+cd ros2-web-desktop
 cp .env.ros2.example .env
 docker compose -f docker-compose.ros2-novnc.yml up --build
 ```

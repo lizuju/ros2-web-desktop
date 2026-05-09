@@ -7,8 +7,8 @@ Use this to view remote Ubuntu / ROS 2 `rviz2`, `rqt`, and terminal windows from
 Run this once:
 
 ```bash
-git clone -b ros2-humble https://github.com/lizuju/vnc-ros.git
-cd vnc-ros
+git clone -b ros2-humble https://github.com/lizuju/ros2-web-desktop.git
+cd ros2-web-desktop
 ./scripts/setup-ros2-novnc-system.sh
 ```
 
@@ -17,7 +17,7 @@ The setup script asks for `ROS_DOMAIN_ID`, the robot workspace setup file, and p
 Start it:
 
 ```bash
-cd ~/vnc-ros
+cd ~/ros2-web-desktop
 ./scripts/start-ros2-novnc-system.sh
 ```
 
@@ -57,7 +57,7 @@ rqt
 Edit `.env` on the remote device:
 
 ```bash
-cd ~/vnc-ros
+cd ~/ros2-web-desktop
 nano .env
 ```
 
