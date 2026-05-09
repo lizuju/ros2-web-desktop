@@ -9,9 +9,17 @@
 
 图形程序实际运行在远程 Ubuntu / ROS 2 设备上，本地电脑只接收 noVNC 网页画面。整个流程无需 SSH X11 转发，因此可以避开 X11 转发在 Apple Silicon Mac 或跨平台环境里的卡顿问题；本地电脑也不需要安装 ROS 2、RViz、rqt、Docker、XQuartz 或 VNC 客户端。
 
-![noVNC 连接页面](docs/images/novnc-connect.png)
+<p align="center">
+  <img src="docs/images/novnc-connect.png" alt="noVNC 连接页面" width="760">
+</p>
 
-![浏览器中的 RViz2](docs/images/rviz2-browser.png)
+<p align="center">
+  <img src="docs/images/multiple-terminals.png" alt="网页桌面中打开多个终端" width="760">
+</p>
+
+<p align="center">
+  <img src="docs/images/rviz2-browser.png" alt="浏览器中的 RViz2" width="760">
+</p>
 
 ## 适合解决什么问题
 
@@ -157,6 +165,29 @@ rqt_image_view
 ```
 
 这些命令都在远程设备上执行，图形窗口会显示在浏览器 noVNC 桌面里。
+
+## 终端操作
+
+网页桌面默认会打开一个 `xterm` 终端。它是远程设备上的真实终端，可以执行 `ros2` 命令、启动 `rviz2` / `rqt`，也可以多开终端窗口。
+
+新开一个终端：
+
+```bash
+xterm &
+```
+
+也可以指定标题和位置：
+
+```bash
+xterm -title "ROS terminal 2" -geometry 132x36+80+80 &
+```
+
+`&` 表示后台启动新窗口，当前终端不会被占用。启动图形工具时也可以用同样方式：
+
+```bash
+rviz2 &
+rqt &
+```
 
 ## 端口说明
 

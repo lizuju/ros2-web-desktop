@@ -1,12 +1,5 @@
 #!/usr/bin/env python3
 
-# Author: Alberto Quattrini Li
-# Date: 2026-03-30
-# Description: Example node to move forward for a fixed duration using a timer callback.
-# Teaching note: This file shows the recommended ROS 2 timer pattern for repeated publishing.
-# Note: Use timer callbacks in later labs.
-# Acknowledgments: Code formatting and comment cleanup assisted by GitHub Copilot.
-
 # Import of relevant libraries.
 import rclpy # module for ROS APIs
 from rclpy.node import Node

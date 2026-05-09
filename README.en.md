@@ -9,9 +9,17 @@
 
 The GUI applications run on the remote Ubuntu / ROS 2 device. The local computer only receives a browser-based noVNC desktop. The workflow does not use SSH X11 forwarding, which avoids the laggy X11 forwarding experience common on Apple Silicon Macs and cross-platform setups. The local computer does not need ROS 2, RViz, rqt, Docker, XQuartz, or a native VNC client.
 
-![noVNC connect screen](docs/images/novnc-connect.png)
+<p align="center">
+  <img src="docs/images/novnc-connect.png" alt="noVNC connect screen" width="760">
+</p>
 
-![RViz2 running in the browser](docs/images/rviz2-browser.png)
+<p align="center">
+  <img src="docs/images/multiple-terminals.png" alt="Multiple terminal windows in the browser desktop" width="760">
+</p>
+
+<p align="center">
+  <img src="docs/images/rviz2-browser.png" alt="RViz2 running in the browser" width="760">
+</p>
 
 ## What This Helps With
 
@@ -157,6 +165,29 @@ rqt_image_view
 ```
 
 These commands run on the remote device, and GUI windows appear inside the browser noVNC desktop.
+
+## Terminal Usage
+
+The browser desktop opens an `xterm` terminal by default. It is a real terminal on the remote device, so you can run `ros2` commands, start `rviz2` / `rqt`, and open more terminal windows.
+
+Open another terminal:
+
+```bash
+xterm &
+```
+
+You can also set the title and position:
+
+```bash
+xterm -title "ROS terminal 2" -geometry 132x36+80+80 &
+```
+
+The `&` starts the new window in the background, so the current terminal remains usable. The same pattern works for GUI tools:
+
+```bash
+rviz2 &
+rqt &
+```
 
 ## Port Reference
 
