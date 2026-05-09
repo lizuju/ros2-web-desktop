@@ -66,7 +66,16 @@ Windows users can use PowerShell or Windows Terminal. If `ssh` is missing, enabl
 
 ### 1. First-Time Setup on the Remote Device
 
-Run this on the remote Ubuntu / ROS 2 device:
+For normal users, download the Release archive. Git is not required:
+
+```bash
+wget https://github.com/lizuju/ros2-web-desktop/releases/download/v0.1.0/ros2-web-desktop-v0.1.0.tar.gz
+tar -xzf ros2-web-desktop-v0.1.0.tar.gz
+cd ros2-web-desktop-v0.1.0
+./scripts/setup-ros2-novnc-system.sh
+```
+
+For development or source updates, use Git clone:
 
 ```bash
 git clone -b ros2-humble https://github.com/lizuju/ros2-web-desktop.git

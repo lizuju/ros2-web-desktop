@@ -66,7 +66,16 @@ Windows 用户可以使用 PowerShell 或 Windows Terminal。若系统没有 `ss
 
 ### 1. 远程设备第一次安装配置
 
-在远程 Ubuntu / ROS 2 设备上运行：
+普通用户可以直接下载 Release 压缩包，不需要安装 Git：
+
+```bash
+wget https://github.com/lizuju/ros2-web-desktop/releases/download/v0.1.0/ros2-web-desktop-v0.1.0.tar.gz
+tar -xzf ros2-web-desktop-v0.1.0.tar.gz
+cd ros2-web-desktop-v0.1.0
+./scripts/setup-ros2-novnc-system.sh
+```
+
+如果要参与开发或同步源码，也可以用 Git clone：
 
 ```bash
 git clone -b ros2-humble https://github.com/lizuju/ros2-web-desktop.git
