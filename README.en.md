@@ -69,9 +69,9 @@ Windows users can use PowerShell or Windows Terminal. If `ssh` is missing, enabl
 For normal users, download the Release archive. Git is not required:
 
 ```bash
-wget https://github.com/lizuju/ros2-web-desktop/releases/download/v0.1.0/ros2-web-desktop-v0.1.0.tar.gz
-tar -xzf ros2-web-desktop-v0.1.0.tar.gz
-cd ros2-web-desktop-v0.1.0
+wget https://github.com/lizuju/ros2-web-desktop/releases/download/v0.1.1/ros2-web-desktop-v0.1.1.tar.gz
+tar -xzf ros2-web-desktop-v0.1.1.tar.gz
+cd ros2-web-desktop-v0.1.1
 ./scripts/setup-ros2-novnc-system.sh
 ```
 
@@ -277,13 +277,14 @@ Press this in the remote device terminal running `start-ros2-novnc-system.sh`:
 Ctrl+C
 ```
 
-If ports remain occupied after an abnormal exit:
+If ports remain occupied after an abnormal exit, use the project stop script:
 
 ```bash
-pkill -f websockify || true
-pkill -f x11vnc || true
-pkill -f Xvfb || true
+cd ~/ros2-web-desktop
+./scripts/stop-ros2-novnc-system.sh
 ```
+
+The script checks only this project's `websockify`, `x11vnc`, and related processes on the configured `NOVNC_PORT` / `VNC_PORT`, so it does not blindly kill unrelated services.
 
 ## Troubleshooting
 

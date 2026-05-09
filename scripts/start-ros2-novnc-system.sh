@@ -35,6 +35,27 @@ fi
 mkdir -p "$XDG_RUNTIME_DIR" "${PROJECT_DIR}/logs"
 chmod 700 "$XDG_RUNTIME_DIR"
 
+PID_FILE="${PROJECT_DIR}/logs/ros2-novnc.pids"
+
+port_owner_lines() {
+  local port="$1"
+  ss -lntp 2>/dev/null | awk -v port=":${port}" '$4 ~ port "$" { print }'
+}
+
+if port_owner_lines "$NOVNC_PORT" | grep -q .; then
+  echo "NOVNC_PORT=${NOVNC_PORT} is already in use:"
+  port_owner_lines "$NOVNC_PORT"
+  echo "Run ./scripts/stop-ros2-novnc-system.sh to stop this project's old processes, or choose another NOVNC_PORT in .env."
+  exit 1
+fi
+
+if port_owner_lines "$VNC_PORT" | grep -q .; then
+  echo "VNC_PORT=${VNC_PORT} is already in use:"
+  port_owner_lines "$VNC_PORT"
+  echo "Run ./scripts/stop-ros2-novnc-system.sh to stop this project's old processes, or choose another VNC_PORT in .env."
+  exit 1
+fi
+
 for cmd in Xvfb fluxbox x11vnc websockify xterm; do
   if ! command -v "$cmd" >/dev/null 2>&1; then
     echo "Missing command: ${cmd}"
@@ -63,18 +84,31 @@ set -u
 pids=()
 names=()
 logs=()
+xterm_pid=""
 
 cleanup() {
-  if [ "${#pids[@]}" -gt 0 ]; then
-    kill "${pids[@]}" 2>/dev/null || true
+  local cleanup_pids=("${pids[@]}")
+  if [ -n "$xterm_pid" ]; then
+    cleanup_pids+=("$xterm_pid")
   fi
+  if [ "${#cleanup_pids[@]}" -gt 0 ]; then
+    kill "${cleanup_pids[@]}" 2>/dev/null || true
+  fi
+  rm -f "$PID_FILE"
 }
 trap cleanup EXIT INT TERM
+
+: > "$PID_FILE"
+
+record_pid() {
+  echo "$1 $2" >> "$PID_FILE"
+}
 
 Xvfb "$DISPLAY" -screen 0 "${DISPLAY_WIDTH}x${DISPLAY_HEIGHT}x${DISPLAY_DEPTH}" -ac +extension GLX +render -noreset >"${PROJECT_DIR}/logs/xvfb.log" 2>&1 &
 pids+=("$!")
 names+=("Xvfb")
 logs+=("${PROJECT_DIR}/logs/xvfb.log")
+record_pid Xvfb "$!"
 
 sleep 1
 
@@ -82,18 +116,23 @@ fluxbox >"${PROJECT_DIR}/logs/fluxbox.log" 2>&1 &
 pids+=("$!")
 names+=("fluxbox")
 logs+=("${PROJECT_DIR}/logs/fluxbox.log")
+record_pid fluxbox "$!"
 
 x11vnc -display "$DISPLAY" -forever -shared -nopw -listen 0.0.0.0 -rfbport "$VNC_PORT" >"${PROJECT_DIR}/logs/x11vnc.log" 2>&1 &
 pids+=("$!")
 names+=("x11vnc")
 logs+=("${PROJECT_DIR}/logs/x11vnc.log")
+record_pid x11vnc "$!"
 
 websockify --web="${NOVNC_WEB_DIR}" "${NOVNC_LISTEN_HOST}:${NOVNC_PORT}" "127.0.0.1:${VNC_PORT}" >"${PROJECT_DIR}/logs/novnc.log" 2>&1 &
 pids+=("$!")
 names+=("websockify")
 logs+=("${PROJECT_DIR}/logs/novnc.log")
+record_pid websockify "$!"
 
 xterm -title "ROS 2 Remote Desktop" -geometry 132x36+20+20 -e bash -lc 'source /opt/ros/${ROS_DISTRO}/setup.bash; [ -n "${ROS_SETUP}" ] && [ -f "${ROS_SETUP}" ] && source "${ROS_SETUP}"; [ -f "${PROJECT_DIR}/ros2_ws/install/setup.bash" ] && source "${PROJECT_DIR}/ros2_ws/install/setup.bash"; echo "ROS_DOMAIN_ID=${ROS_DOMAIN_ID}"; echo "Run: ros2 topic list"; echo "Run: rviz2"; echo "Run: rqt"; exec bash' >"${PROJECT_DIR}/logs/xterm.log" 2>&1 &
+xterm_pid="$!"
+record_pid xterm "$xterm_pid"
 
 sleep 2
 

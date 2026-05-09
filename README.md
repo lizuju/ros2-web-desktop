@@ -69,9 +69,9 @@ Windows 用户可以使用 PowerShell 或 Windows Terminal。若系统没有 `ss
 普通用户可以直接下载 Release 压缩包，不需要安装 Git：
 
 ```bash
-wget https://github.com/lizuju/ros2-web-desktop/releases/download/v0.1.0/ros2-web-desktop-v0.1.0.tar.gz
-tar -xzf ros2-web-desktop-v0.1.0.tar.gz
-cd ros2-web-desktop-v0.1.0
+wget https://github.com/lizuju/ros2-web-desktop/releases/download/v0.1.1/ros2-web-desktop-v0.1.1.tar.gz
+tar -xzf ros2-web-desktop-v0.1.1.tar.gz
+cd ros2-web-desktop-v0.1.1
 ./scripts/setup-ros2-novnc-system.sh
 ```
 
@@ -277,13 +277,14 @@ http://<device-host>:<NOVNC_PORT>/vnc.html
 Ctrl+C
 ```
 
-如果异常退出后端口仍被占用：
+如果异常退出后端口仍被占用，使用项目自带的停止脚本：
 
 ```bash
-pkill -f websockify || true
-pkill -f x11vnc || true
-pkill -f Xvfb || true
+cd ~/ros2-web-desktop
+./scripts/stop-ros2-novnc-system.sh
 ```
+
+这个脚本只会按 `.env` 里的 `NOVNC_PORT` / `VNC_PORT` 检查本项目的 `websockify`、`x11vnc` 等进程，不会按端口号全局乱杀其它服务。
 
 ## 常见问题
 

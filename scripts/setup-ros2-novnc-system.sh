@@ -114,6 +114,8 @@ echo "  VNC_PORT=${vnc_port}"
 echo "Start the remote ROS 2 desktop with:"
 echo "  cd ${PROJECT_DIR}"
 echo "  ./scripts/start-ros2-novnc-system.sh"
+echo "Stop it later with:"
+echo "  ./scripts/stop-ros2-novnc-system.sh"
 echo
 echo "Open a tunnel from the local computer with:"
 echo "  ssh -N -L 18080:127.0.0.1:${novnc_port} <device-user>@<device-host>"
