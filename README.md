@@ -271,8 +271,3 @@ tail -n 80 logs/novnc.log logs/x11vnc.log logs/xvfb.log
 
 - 换一个本地端口，例如从 `18080` 改成 `18081`
 - 浏览器也对应打开 `http://localhost:18081/vnc.html`
-
-## 相关文档
-
-- [QUICKSTART.md](QUICKSTART.md)
-- [LOCAL_TUNNEL.md](LOCAL_TUNNEL.md)

@@ -271,8 +271,3 @@ If `ssh -L` reports `Address already in use`:
 
 - change the local port, for example from `18080` to `18081`
 - open the matching browser URL, such as `http://localhost:18081/vnc.html`
-
-## Additional Documents
-
-- [QUICKSTART.md](QUICKSTART.md)
-- [LOCAL_TUNNEL.md](LOCAL_TUNNEL.md)
