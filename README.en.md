@@ -3,45 +3,44 @@
 <p align="left">
   <a href="README.md"><img src="https://img.shields.io/badge/切换语言-简体中文-blue" alt="简体中文"></a>
   <a href="README.en.md"><img src="https://img.shields.io/badge/Switch-English-blue" alt="English"></a>
+  <a href="https://github.com/lizuju/ros2-web-desktop/releases/latest"><img src="https://img.shields.io/badge/Release-v0.1.3-green" alt="Release"></a>
+  <img src="https://img.shields.io/badge/No-X11%20Forwarding-orange" alt="No X11 Forwarding">
 </p>
 
-`ros2-web-desktop` lets users view and operate ROS 2 GUI tools running on a remote Ubuntu / ROS 2 device from a browser on **macOS, Windows, or Linux**. It is designed for tools such as `rviz2`, `rqt`, `rqt_graph`, `rqt_image_view`, and a graphical terminal.
+`ros2-web-desktop` lets users view and operate ROS 2 GUI tools such as `rviz2`, `rqt`, `rqt_graph`, `rqt_image_view`, and a graphical terminal from a browser on **macOS, Windows, or Linux**, with **no SSH X11 forwarding**.
 
-The GUI applications run on the remote Ubuntu / ROS 2 device. The local computer only receives a browser-based noVNC desktop. The workflow does not use SSH X11 forwarding, which avoids the laggy X11 forwarding experience common on Apple Silicon Macs and cross-platform setups. The local computer does not need ROS 2, RViz, rqt, Docker, XQuartz, or a native VNC client.
+The GUI applications run on the remote Ubuntu / ROS 2 device. The local computer only receives a browser-based noVNC desktop and does not need ROS 2, RViz, rqt, Docker, XQuartz, or a native VNC client.
 
 <p align="center">
-  <img src="docs/images/novnc-connect.png" alt="noVNC connect screen" width="600">
+  <img src="docs/images/demo.gif" alt="ros2-web-desktop demo" width="720">
 </p>
 
-<p align="center">
-  <img src="docs/images/multiple-terminals.png" alt="Multiple terminal windows in the browser desktop" width="600">
-</p>
+If this project helps you, a GitHub Star is appreciated: <https://github.com/lizuju/ros2-web-desktop>
 
-<p align="center">
-  <img src="docs/images/rviz2-browser.png" alt="RViz2 running in the browser" width="600">
-</p>
-
-## What This Helps With
+## Why It Helps
 
 - View RViz2, rqt, and other ROS GUI tools from a remote Ubuntu / ROS 2 device in a browser on Apple Silicon Mac, Windows, or Linux, without X11 forwarding.
 - Let users inspect robot state, topics, tf, maps, point clouds, and GUI tools without installing ROS locally.
 - Access noVNC through an SSH tunnel by default, so the remote device noVNC port is not exposed directly to the LAN.
 
-## How It Works
+## Architecture
 
-The remote Ubuntu / ROS 2 device starts a lightweight virtual desktop:
-
-- `Xvfb` provides a virtual display
-- `fluxbox` provides a window manager
-- `x11vnc` exposes the virtual desktop as VNC
-- `websockify` / noVNC exposes VNC as a browser page
-- `rviz2`, `rqt`, and other GUI tools run locally on the remote device
-
-In the default secure mode, noVNC listens only on the remote device's `127.0.0.1`. The local computer connects through an SSH tunnel:
-
-```text
-local browser -> localhost:18080 -> SSH tunnel -> remote device 127.0.0.1:<NOVNC_PORT>
+```mermaid
+flowchart LR
+  A["Local browser<br/>macOS / Windows / Linux"] --> B["SSH tunnel<br/>localhost:18080"]
+  B --> C["Remote Ubuntu / ROS 2<br/>127.0.0.1:NOVNC_PORT"]
+  C --> D["noVNC + websockify"]
+  D --> E["x11vnc + Xvfb + fluxbox"]
+  E --> F["rviz2 / rqt / xterm"]
 ```
+
+## Good Fit / Not a Good Fit
+
+| Good fit | Not a good fit |
+| --- | --- |
+| ROS 2 developers who need remote RViz2 / rqt access | Workflows that need rendering to happen on the local computer |
+| Apple Silicon Mac users frustrated by slow X11 forwarding | Production systems that expose remote desktops directly to the public internet |
+| Headless robot hosts, industrial PCs, and Ubuntu devices | Enterprise remote desktop systems with multi-user audit requirements |
 
 ## Remote Device Requirements
 
@@ -69,7 +68,7 @@ Windows users can use PowerShell or Windows Terminal. If `ssh` is missing, enabl
 For normal users, download the Release archive. Git is not required:
 
 ```bash
-wget https://github.com/lizuju/ros2-web-desktop/releases/download/v0.1.2/ros2-web-desktop.tar.gz
+wget https://github.com/lizuju/ros2-web-desktop/releases/download/v0.1.3/ros2-web-desktop.tar.gz
 tar -xzf ros2-web-desktop.tar.gz
 cd ros2-web-desktop
 ./scripts/setup-ros2-novnc-system.sh
@@ -313,27 +312,31 @@ The script checks only this project's `websockify`, `x11vnc`, and related proces
 
 ## Troubleshooting
 
-If the noVNC page does not open:
+**Why not SSH X11 forwarding?**
+
+X11 forwarding can lag with RViz2, point clouds, maps, and cross-platform setups, especially on Apple Silicon Macs. This project keeps the GUI on the remote device and streams only a browser desktop to the local computer.
+
+**The page does not open, or it stays on Connecting.**
 
 ```bash
 cd ~/ros2-web-desktop
 ./scripts/doctor-ros2-novnc-system.sh
 ```
 
-If the page opens but **Connect** fails:
+This is usually caused by a stopped remote service, a port conflict, or a missing SSH tunnel. Check `doctor`, then restart `./scripts/start-ros2-novnc-system.sh`.
 
-- the backend VNC port is often occupied
-- first run `./scripts/doctor-ros2-novnc-system.sh` to check whether `VNC_PORT` is occupied by another process
-- change `VNC_PORT` in `.env`
-- restart `./scripts/start-ros2-novnc-system.sh`
+**How should I choose ports?**
 
-If `rviz2` cannot see robot topics:
+`NOVNC_PORT` and `VNC_PORT` are remote device ports. Setup suggests free ports automatically. If local `18080` is busy, the tunnel helper chooses the next free local port.
 
-- verify `ROS_DOMAIN_ID`
-- verify `ROS_SETUP`
-- run `ros2 topic list` inside the browser terminal
+**What does the local computer need?**
 
-If `ssh -L` reports `Address already in use`:
+Only a browser and the `ssh` command. macOS / Linux include it by default. On Windows, use PowerShell or Windows Terminal with OpenSSH Client enabled.
 
-- prefer `./scripts/open-ros2-novnc-tunnel.sh <device-user>@<device-host>`; it automatically chooses a free local port
-- if you write `ssh -L` manually, change the local port, for example from `18080` to `18081`
+**Does Windows work?**
+
+Yes. Run `.\scripts\open-ros2-novnc-tunnel.ps1 <device-user>@<device-host>`, then open the URL printed by the script.
+
+**RViz2 cannot see robot topics.**
+
+Check that `ROS_DOMAIN_ID` in `.env` matches the robot, verify `ROS_SETUP`, then run `ros2 topic list` inside the browser terminal.

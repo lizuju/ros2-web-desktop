@@ -3,45 +3,44 @@
 <p align="left">
   <a href="README.md"><img src="https://img.shields.io/badge/切换语言-简体中文-blue" alt="简体中文"></a>
   <a href="README.en.md"><img src="https://img.shields.io/badge/Switch-English-blue" alt="English"></a>
+  <a href="https://github.com/lizuju/ros2-web-desktop/releases/latest"><img src="https://img.shields.io/badge/Release-v0.1.3-green" alt="Release"></a>
+  <img src="https://img.shields.io/badge/No-X11%20Forwarding-orange" alt="No X11 Forwarding">
 </p>
 
-`ros2-web-desktop` 可以让用户在 **macOS、Windows、Linux** 的浏览器里查看和操作远程 Ubuntu / ROS 2 设备上的图形工具，例如 `rviz2`、`rqt`、`rqt_graph`、`rqt_image_view` 和图形终端。
+`ros2-web-desktop` 可以在 **macOS、Windows、Linux** 的浏览器里查看和操作远程 Ubuntu / ROS 2 设备上的 `rviz2`、`rqt`、`rqt_graph`、`rqt_image_view` 和图形终端，**无需 SSH X11 转发**。
 
-图形程序实际运行在远程 Ubuntu / ROS 2 设备上，本地电脑只接收 noVNC 网页画面。整个流程无需 SSH X11 转发，因此可以避开 X11 转发在 Apple Silicon Mac 或跨平台环境里的卡顿问题；本地电脑也不需要安装 ROS 2、RViz、rqt、Docker、XQuartz 或 VNC 客户端。
+图形程序运行在远程设备上，本地电脑只接收 noVNC 网页画面。本地不需要安装 ROS 2、RViz、rqt、Docker、XQuartz 或 VNC 客户端。
 
 <p align="center">
-  <img src="docs/images/novnc-connect.png" alt="noVNC 连接页面" width="600">
+  <img src="docs/images/demo.gif" alt="ros2-web-desktop demo" width="720">
 </p>
 
-<p align="center">
-  <img src="docs/images/multiple-terminals.png" alt="网页桌面中打开多个终端" width="600">
-</p>
+如果项目对你有帮助，欢迎 Star：<https://github.com/lizuju/ros2-web-desktop>
 
-<p align="center">
-  <img src="docs/images/rviz2-browser.png" alt="浏览器中的 RViz2" width="600">
-</p>
-
-## 适合解决什么问题
+## 核心价值
 
 - 在 Mac Apple Silicon、Windows 或 Linux 电脑上通过浏览器查看远程 Ubuntu / ROS 2 设备的 RViz2、rqt 等图形界面，无需 X11 转发。
 - 让使用者无需配置本地 ROS 环境，也能快速查看机器人状态、topic、tf、地图、点云等。
 - 通过 SSH 隧道访问 noVNC，默认不把远程设备的 noVNC 端口暴露给局域网。
 
-## 工作方式
+## 架构
 
-远程 Ubuntu / ROS 2 设备上启动一个轻量虚拟桌面：
-
-- `Xvfb` 提供虚拟显示器
-- `fluxbox` 提供窗口管理器
-- `x11vnc` 把虚拟桌面变成 VNC
-- `websockify` / noVNC 把 VNC 变成浏览器页面
-- `rviz2`、`rqt` 等程序在远程设备本机运行
-
-默认安全模式下，noVNC 只监听远程设备的 `127.0.0.1`。本地电脑通过 SSH 隧道访问：
-
-```text
-本地浏览器 -> localhost:18080 -> SSH 隧道 -> 远程设备 127.0.0.1:<NOVNC_PORT>
+```mermaid
+flowchart LR
+  A["本地浏览器<br/>macOS / Windows / Linux"] --> B["SSH 隧道<br/>localhost:18080"]
+  B --> C["远程 Ubuntu / ROS 2<br/>127.0.0.1:NOVNC_PORT"]
+  C --> D["noVNC + websockify"]
+  D --> E["x11vnc + Xvfb + fluxbox"]
+  E --> F["rviz2 / rqt / xterm"]
 ```
+
+## 适合谁 / 不适合谁
+
+| 适合 | 不适合 |
+| --- | --- |
+| 需要远程查看 RViz2 / rqt 的 ROS 2 开发者 | 想把图形渲染压力转移到本地电脑的场景 |
+| Mac Apple Silicon 上觉得 X11 转发卡的用户 | 需要公网暴露远程桌面的生产环境 |
+| 没有显示器的机器人主机、工控机、Ubuntu 设备 | 需要多人权限管理或审计的企业远程桌面系统 |
 
 ## 远程设备要求
 
@@ -69,7 +68,7 @@ Windows 用户可以使用 PowerShell 或 Windows Terminal。若系统没有 `ss
 普通用户可以直接下载 Release 压缩包，不需要安装 Git：
 
 ```bash
-wget https://github.com/lizuju/ros2-web-desktop/releases/download/v0.1.2/ros2-web-desktop.tar.gz
+wget https://github.com/lizuju/ros2-web-desktop/releases/download/v0.1.3/ros2-web-desktop.tar.gz
 tar -xzf ros2-web-desktop.tar.gz
 cd ros2-web-desktop
 ./scripts/setup-ros2-novnc-system.sh
@@ -313,27 +312,31 @@ cd ~/ros2-web-desktop
 
 ## 常见问题
 
-页面打不开：
+**为什么不用 X11 转发？**
+
+X11 转发在 RViz2、点云、地图这类图形界面上容易卡，尤其是 Apple Silicon Mac 和跨平台环境。本项目把图形界面留在远程设备上，本地只看浏览器画面。
+
+**页面打不开或一直 Connecting？**
 
 ```bash
 cd ~/ros2-web-desktop
 ./scripts/doctor-ros2-novnc-system.sh
 ```
 
-页面能打开但点击 Connect 失败：
+通常是远程服务没启动、端口冲突，或本地 SSH 隧道没开。先看 `doctor` 输出，再重启 `./scripts/start-ros2-novnc-system.sh`。
 
-- 通常是后端 VNC 端口冲突
-- 先运行 `./scripts/doctor-ros2-novnc-system.sh` 查看 `VNC_PORT` 是否被其它进程占用
-- 修改 `.env` 里的 `VNC_PORT`
-- 重启 `./scripts/start-ros2-novnc-system.sh`
+**端口要怎么选？**
 
-`rviz2` 看不到机器人 topic：
+`NOVNC_PORT` 和 `VNC_PORT` 是远程设备端口，setup 会自动推荐空闲端口。本地 `18080` 被占用时，项目隧道脚本会自动换到下一个空闲端口。
 
-- 检查 `ROS_DOMAIN_ID` 是否和机器人一致
-- 检查 `ROS_SETUP` 是否指向正确工作区
-- 在网页终端里运行 `ros2 topic list`
+**本地电脑需要安装什么？**
 
-本地 `ssh -L` 提示 `Address already in use`：
+只需要浏览器和 `ssh` 命令。macOS / Linux 默认有；Windows 推荐用 PowerShell 或 Windows Terminal，并启用 OpenSSH Client。
 
-- 优先使用 `./scripts/open-ros2-novnc-tunnel.sh <device-user>@<device-host>`，脚本会自动选择空闲本地端口
-- 如果手动写 `ssh -L`，换一个本地端口，例如从 `18080` 改成 `18081`
+**Windows 可以用吗？**
+
+可以。使用 `.\scripts\open-ros2-novnc-tunnel.ps1 <device-user>@<device-host>` 打开 SSH 隧道，再用浏览器访问脚本输出的地址。
+
+**RViz2 看不到机器人 topic？**
+
+检查 `.env` 里的 `ROS_DOMAIN_ID` 是否和机器人一致，`ROS_SETUP` 是否指向正确工作区，然后在网页终端里运行 `ros2 topic list`。
