@@ -3,7 +3,7 @@
 <p align="left">
   <a href="README.md"><img src="https://img.shields.io/badge/切换语言-简体中文-blue" alt="简体中文"></a>
   <a href="README.en.md"><img src="https://img.shields.io/badge/Switch-English-blue" alt="English"></a>
-  <a href="https://github.com/lizuju/ros2-web-desktop/releases/latest"><img src="https://img.shields.io/badge/Release-v0.1.3-green" alt="Release"></a>
+  <a href="https://github.com/lizuju/ros2-web-desktop/releases/latest"><img src="https://img.shields.io/badge/Release-v0.1.4-green" alt="Release"></a>
   <img src="https://img.shields.io/badge/No-X11%20Forwarding-orange" alt="No X11 Forwarding">
 </p>
 
@@ -34,17 +34,9 @@ flowchart LR
   E --> F["rviz2 / rqt / xterm"]
 ```
 
-## 适合谁 / 不适合谁
-
-| 适合 | 不适合 |
-| --- | --- |
-| 需要远程查看 RViz2 / rqt 的 ROS 2 开发者 | 想把图形渲染压力转移到本地电脑的场景 |
-| Mac Apple Silicon 上觉得 X11 转发卡的用户 | 需要公网暴露远程桌面的生产环境 |
-| 没有显示器的机器人主机、工控机、Ubuntu 设备 | 需要多人权限管理或审计的企业远程桌面系统 |
-
 ## 远程设备要求
 
-- Ubuntu，并已安装 ROS 2，通常是 Ubuntu 22.04 + ROS 2 Humble
+- Ubuntu，并已安装 ROS 2
 - 已开启 SSH
 - 当前用户可以执行 `sudo apt-get`
 - 如果机器人有自定义消息或 launch 文件，需要知道工作区的 `install/setup.bash` 绝对路径
@@ -68,7 +60,7 @@ Windows 用户可以使用 PowerShell 或 Windows Terminal。若系统没有 `ss
 普通用户可以直接下载 Release 压缩包，不需要安装 Git：
 
 ```bash
-wget https://github.com/lizuju/ros2-web-desktop/releases/download/v0.1.3/ros2-web-desktop.tar.gz
+wget https://github.com/lizuju/ros2-web-desktop/releases/download/v0.1.4/ros2-web-desktop.tar.gz
 tar -xzf ros2-web-desktop.tar.gz
 cd ros2-web-desktop
 ./scripts/setup-ros2-novnc-system.sh
@@ -336,6 +328,14 @@ cd ~/ros2-web-desktop
 **Windows 可以用吗？**
 
 可以。使用 `.\scripts\open-ros2-novnc-tunnel.ps1 <device-user>@<device-host>` 打开 SSH 隧道，再用浏览器访问脚本输出的地址。
+
+**和 Foxglove 比有什么优势？**
+
+它直接显示远程设备上的原生 RViz2 / rqt 桌面，不需要把现有 ROS GUI 工作流迁移到新的可视化面板。
+
+**和 ToDesk 这类远程桌面比有什么优势？**
+
+它只面向 ROS 2 图形工具和 SSH 隧道场景，本地无需安装远程桌面客户端，也默认不把桌面服务暴露到局域网。
 
 **RViz2 看不到机器人 topic？**
 

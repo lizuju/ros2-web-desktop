@@ -3,7 +3,7 @@
 <p align="left">
   <a href="README.md"><img src="https://img.shields.io/badge/切换语言-简体中文-blue" alt="简体中文"></a>
   <a href="README.en.md"><img src="https://img.shields.io/badge/Switch-English-blue" alt="English"></a>
-  <a href="https://github.com/lizuju/ros2-web-desktop/releases/latest"><img src="https://img.shields.io/badge/Release-v0.1.3-green" alt="Release"></a>
+  <a href="https://github.com/lizuju/ros2-web-desktop/releases/latest"><img src="https://img.shields.io/badge/Release-v0.1.4-green" alt="Release"></a>
   <img src="https://img.shields.io/badge/No-X11%20Forwarding-orange" alt="No X11 Forwarding">
 </p>
 
@@ -34,17 +34,9 @@ flowchart LR
   E --> F["rviz2 / rqt / xterm"]
 ```
 
-## Good Fit / Not a Good Fit
-
-| Good fit | Not a good fit |
-| --- | --- |
-| ROS 2 developers who need remote RViz2 / rqt access | Workflows that need rendering to happen on the local computer |
-| Apple Silicon Mac users frustrated by slow X11 forwarding | Production systems that expose remote desktops directly to the public internet |
-| Headless robot hosts, industrial PCs, and Ubuntu devices | Enterprise remote desktop systems with multi-user audit requirements |
-
 ## Remote Device Requirements
 
-- Ubuntu with ROS 2 installed, usually Ubuntu 22.04 + ROS 2 Humble
+- Ubuntu with ROS 2 installed
 - SSH enabled
 - `sudo apt-get` access
 - the robot workspace `install/setup.bash` path, if custom messages, launch files, or robot packages are needed
@@ -68,7 +60,7 @@ Windows users can use PowerShell or Windows Terminal. If `ssh` is missing, enabl
 For normal users, download the Release archive. Git is not required:
 
 ```bash
-wget https://github.com/lizuju/ros2-web-desktop/releases/download/v0.1.3/ros2-web-desktop.tar.gz
+wget https://github.com/lizuju/ros2-web-desktop/releases/download/v0.1.4/ros2-web-desktop.tar.gz
 tar -xzf ros2-web-desktop.tar.gz
 cd ros2-web-desktop
 ./scripts/setup-ros2-novnc-system.sh
@@ -336,6 +328,14 @@ Only a browser and the `ssh` command. macOS / Linux include it by default. On Wi
 **Does Windows work?**
 
 Yes. Run `.\scripts\open-ros2-novnc-tunnel.ps1 <device-user>@<device-host>`, then open the URL printed by the script.
+
+**What is the advantage over Foxglove?**
+
+It shows the native RViz2 / rqt desktop running on the remote device, so existing ROS GUI workflows do not need to be rebuilt as new visualization panels.
+
+**What is the advantage over ToDesk-style remote desktop tools?**
+
+It is focused on ROS 2 GUI tools over SSH tunnels, needs no local remote-desktop client, and does not expose a desktop service to the LAN by default.
 
 **RViz2 cannot see robot topics.**
 
