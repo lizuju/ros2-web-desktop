@@ -15,9 +15,18 @@ export NOVNC_PORT="${NOVNC_PORT:-31880}"
 export VNC_PORT="${VNC_PORT:-31901}"
 
 PID_FILE="${PROJECT_DIR}/logs/ros2-novnc.pids"
+stopped_count=0
+missing_count=0
+skipped_count=0
+failed_count=0
+seen_pids=""
 
 pid_args() {
   ps -p "$1" -o args= 2>/dev/null || true
+}
+
+pid_exists() {
+  ps -p "$1" >/dev/null 2>&1
 }
 
 matches_expected_process() {
@@ -48,24 +57,49 @@ matches_expected_process() {
   esac
 }
 
+already_seen_pid() {
+  [[ " ${seen_pids} " == *" $1 "* ]]
+}
+
+mark_seen_pid() {
+  seen_pids="${seen_pids} $1"
+}
+
 stop_pid() {
   local name="$1"
   local pid="$2"
 
-  if ! [[ "$pid" =~ ^[0-9]+$ ]] || ! kill -0 "$pid" 2>/dev/null; then
+  if ! [[ "$pid" =~ ^[0-9]+$ ]]; then
+    echo "Skip ${name}: invalid pid '${pid}'."
+    skipped_count=$((skipped_count + 1))
+    return
+  fi
+
+  if already_seen_pid "$pid"; then
+    return
+  fi
+  mark_seen_pid "$pid"
+
+  if ! pid_exists "$pid"; then
+    echo "Not running: ${name} pid ${pid}."
+    missing_count=$((missing_count + 1))
     return
   fi
 
   if ! matches_expected_process "$name" "$pid"; then
-    echo "Skip ${pid}: not a matching ${name} process."
+    echo "Skip ${name} pid ${pid}: command does not match this project."
+    echo "  $(pid_args "$pid")"
+    skipped_count=$((skipped_count + 1))
     return
   fi
 
   if kill "$pid" 2>/dev/null; then
     echo "Stopped ${name} pid ${pid}."
+    stopped_count=$((stopped_count + 1))
   else
     echo "Could not stop ${name} pid ${pid}. If it is owned by another user, run:"
     echo "  sudo kill ${pid}"
+    failed_count=$((failed_count + 1))
   fi
 }
 
@@ -89,13 +123,38 @@ stop_project_port_processes() {
   done
 }
 
+echo "ros2-web-desktop stop"
+echo "Project: ${PROJECT_DIR}"
+echo "Config: DISPLAY=${DISPLAY}, NOVNC_PORT=${NOVNC_PORT}, VNC_PORT=${VNC_PORT}"
+echo "Scope: only matching ros2-web-desktop processes from the pid file or configured ports will be stopped."
+echo
+
 if [ -f "$PID_FILE" ]; then
+  echo "Checking pid file: ${PID_FILE}"
   while read -r name pid; do
     stop_pid "$name" "$pid"
   done < "$PID_FILE"
-  rm -f "$PID_FILE"
+else
+  echo "PID file not found: ${PID_FILE}"
 fi
 
+echo "Checking configured ports."
 stop_project_port_processes
 
-echo "Checked ros2-web-desktop ports: NOVNC_PORT=${NOVNC_PORT}, VNC_PORT=${VNC_PORT}."
+if [ "$failed_count" -eq 0 ]; then
+  rm -f "$PID_FILE"
+else
+  echo "PID file kept because some matching processes could not be stopped."
+fi
+
+echo
+echo "Stop summary: stopped=${stopped_count}, already_gone=${missing_count}, skipped=${skipped_count}, failed=${failed_count}."
+echo "Checked ports: NOVNC_PORT=${NOVNC_PORT}, VNC_PORT=${VNC_PORT}."
+
+if [ "$stopped_count" -eq 0 ] && [ "$failed_count" -eq 0 ]; then
+  echo "No matching ros2-web-desktop process needed stopping."
+fi
+
+if [ "$failed_count" -gt 0 ]; then
+  exit 1
+fi

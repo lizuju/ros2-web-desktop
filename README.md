@@ -3,7 +3,7 @@
 <p align="left">
   <a href="README.md"><img src="https://img.shields.io/badge/切换语言-简体中文-blue" alt="简体中文"></a>
   <a href="README.en.md"><img src="https://img.shields.io/badge/Switch-English-blue" alt="English"></a>
-  <a href="https://github.com/lizuju/ros2-web-desktop/releases/latest"><img src="https://img.shields.io/badge/Release-v0.1.5-green" alt="Release"></a>
+  <a href="https://github.com/lizuju/ros2-web-desktop/releases/latest"><img src="https://img.shields.io/badge/Release-v0.1.6-green" alt="Release"></a>
   <img src="https://img.shields.io/badge/No-X11%20Forwarding-orange" alt="No X11 Forwarding">
 </p>
 
@@ -60,7 +60,7 @@ Windows 用户可以使用 PowerShell 或 Windows Terminal。若系统没有 `ss
 普通用户可以直接下载 Release 压缩包，不需要安装 Git：
 
 ```bash
-wget https://github.com/lizuju/ros2-web-desktop/releases/download/v0.1.5/ros2-web-desktop.tar.gz
+wget https://github.com/lizuju/ros2-web-desktop/releases/download/v0.1.6/ros2-web-desktop.tar.gz
 tar -xzf ros2-web-desktop.tar.gz
 cd ros2-web-desktop
 ./scripts/setup-ros2-novnc-system.sh
@@ -82,7 +82,7 @@ cd ros2-web-desktop
 - 自动推荐不常见且未占用的端口，通常从 `31880` 和 `31901` 开始找
 - 检查端口是否有效、是否被占用、两个端口是否冲突
 - 安装 noVNC、Xvfb、x11vnc、fluxbox、xterm 等依赖
-- 最后输出自检、启动和 SSH 隧道命令
+- 最后输出自检、状态、启动和 SSH 隧道命令
 
 提示项说明：
 
@@ -112,6 +112,12 @@ cd ~/ros2-web-desktop
 ```
 
 `doctor` 只检查 ROS 2、依赖、端口、DISPLAY 和 noVNC 状态，不启动 `rviz2`，也不会增加远程设备的 GPU 负载。看到 `FAIL` 时，按输出的建议处理；只有 `WARN` 通常表示服务还没启动。
+
+查看 noVNC / x11vnc / Xvfb 当前是否运行：
+
+```bash
+./scripts/status-ros2-novnc-system.sh
+```
 
 ### 3. 远程设备每次启动
 
@@ -300,7 +306,7 @@ cd ~/ros2-web-desktop
 ./scripts/stop-ros2-novnc-system.sh
 ```
 
-这个脚本只会按 `.env` 里的 `NOVNC_PORT` / `VNC_PORT` 检查本项目的 `websockify`、`x11vnc` 等进程，不会按端口号全局乱杀其它服务。
+这个脚本只会按 `.env` 里的 `NOVNC_PORT` / `VNC_PORT` 和本项目 pid 文件检查 `websockify`、`x11vnc` 等进程，不会按端口号全局乱杀其它服务。停止前后可以用 `./scripts/status-ros2-novnc-system.sh` 看当前状态。
 
 ## 常见问题
 
@@ -312,10 +318,11 @@ X11 转发在 RViz2、点云、地图这类图形界面上容易卡，尤其是 
 
 ```bash
 cd ~/ros2-web-desktop
+./scripts/status-ros2-novnc-system.sh
 ./scripts/doctor-ros2-novnc-system.sh
 ```
 
-通常是远程服务没启动、端口冲突，或本地 SSH 隧道没开。先看 `doctor` 输出，再重启 `./scripts/start-ros2-novnc-system.sh`。
+通常是远程服务没启动、端口冲突，或本地 SSH 隧道没开。先用 `status` 看 noVNC / x11vnc / Xvfb 是否运行，再看 `doctor` 输出并重启 `./scripts/start-ros2-novnc-system.sh`。
 
 **端口要怎么选？**
 

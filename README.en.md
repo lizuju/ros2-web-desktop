@@ -3,7 +3,7 @@
 <p align="left">
   <a href="README.md"><img src="https://img.shields.io/badge/切换语言-简体中文-blue" alt="简体中文"></a>
   <a href="README.en.md"><img src="https://img.shields.io/badge/Switch-English-blue" alt="English"></a>
-  <a href="https://github.com/lizuju/ros2-web-desktop/releases/latest"><img src="https://img.shields.io/badge/Release-v0.1.5-green" alt="Release"></a>
+  <a href="https://github.com/lizuju/ros2-web-desktop/releases/latest"><img src="https://img.shields.io/badge/Release-v0.1.6-green" alt="Release"></a>
   <img src="https://img.shields.io/badge/No-X11%20Forwarding-orange" alt="No X11 Forwarding">
 </p>
 
@@ -60,7 +60,7 @@ Windows users can use PowerShell or Windows Terminal. If `ssh` is missing, enabl
 For normal users, download the Release archive. Git is not required:
 
 ```bash
-wget https://github.com/lizuju/ros2-web-desktop/releases/download/v0.1.5/ros2-web-desktop.tar.gz
+wget https://github.com/lizuju/ros2-web-desktop/releases/download/v0.1.6/ros2-web-desktop.tar.gz
 tar -xzf ros2-web-desktop.tar.gz
 cd ros2-web-desktop
 ./scripts/setup-ros2-novnc-system.sh
@@ -82,7 +82,7 @@ The setup script will:
 - suggest uncommon free ports, usually starting from `31880` and `31901`
 - validate port values and avoid occupied/conflicting ports
 - install noVNC, Xvfb, x11vnc, fluxbox, xterm, and related dependencies
-- print the doctor, start, and SSH tunnel commands
+- print the doctor, status, start, and SSH tunnel commands
 
 Prompt guidance:
 
@@ -112,6 +112,12 @@ cd ~/ros2-web-desktop
 ```
 
 `doctor` only checks ROS 2, dependencies, ports, DISPLAY, and noVNC status. It does not start `rviz2` and does not add GPU load on the remote device. If you see `FAIL`, follow the printed suggestion. `WARN` usually means the service has not been started yet.
+
+Check whether noVNC / x11vnc / Xvfb are currently running:
+
+```bash
+./scripts/status-ros2-novnc-system.sh
+```
 
 ### 3. Start on the Remote Device
 
@@ -300,7 +306,7 @@ cd ~/ros2-web-desktop
 ./scripts/stop-ros2-novnc-system.sh
 ```
 
-The script checks only this project's `websockify`, `x11vnc`, and related processes on the configured `NOVNC_PORT` / `VNC_PORT`, so it does not blindly kill unrelated services.
+The script checks only this project's pid file and matching `websockify`, `x11vnc`, and related processes on the configured `NOVNC_PORT` / `VNC_PORT`, so it does not blindly kill unrelated services. Run `./scripts/status-ros2-novnc-system.sh` before or after stopping to check the current state.
 
 ## Troubleshooting
 
@@ -312,10 +318,11 @@ X11 forwarding can lag with RViz2, point clouds, maps, and cross-platform setups
 
 ```bash
 cd ~/ros2-web-desktop
+./scripts/status-ros2-novnc-system.sh
 ./scripts/doctor-ros2-novnc-system.sh
 ```
 
-This is usually caused by a stopped remote service, a port conflict, or a missing SSH tunnel. Check `doctor`, then restart `./scripts/start-ros2-novnc-system.sh`.
+This is usually caused by a stopped remote service, a port conflict, or a missing SSH tunnel. Check `status` first to see whether noVNC / x11vnc / Xvfb are running, then check `doctor` and restart `./scripts/start-ros2-novnc-system.sh`.
 
 **How should I choose ports?**
 
