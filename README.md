@@ -3,7 +3,7 @@
 <p align="left">
   <a href="README.md"><img src="https://img.shields.io/badge/切换语言-简体中文-blue" alt="简体中文"></a>
   <a href="README.en.md"><img src="https://img.shields.io/badge/Switch-English-blue" alt="English"></a>
-  <a href="https://github.com/lizuju/ros2-web-desktop/releases/latest"><img src="https://img.shields.io/badge/Release-v0.1.6-green" alt="Release"></a>
+  <a href="https://github.com/lizuju/ros2-web-desktop/releases/latest"><img src="https://img.shields.io/badge/Release-v0.1.7-green" alt="Release"></a>
   <img src="https://img.shields.io/badge/No-X11%20Forwarding-orange" alt="No X11 Forwarding">
 </p>
 
@@ -60,7 +60,7 @@ Windows 用户可以使用 PowerShell 或 Windows Terminal。若系统没有 `ss
 普通用户可以直接下载 Release 压缩包，不需要安装 Git：
 
 ```bash
-wget https://github.com/lizuju/ros2-web-desktop/releases/download/v0.1.6/ros2-web-desktop.tar.gz
+wget https://github.com/lizuju/ros2-web-desktop/releases/download/v0.1.7/ros2-web-desktop.tar.gz
 tar -xzf ros2-web-desktop.tar.gz
 cd ros2-web-desktop
 ./scripts/setup-ros2-novnc-system.sh
@@ -323,6 +323,10 @@ cd ~/ros2-web-desktop
 ```
 
 通常是远程服务没启动、端口冲突，或本地 SSH 隧道没开。先用 `status` 看 noVNC / x11vnc / Xvfb 是否运行，再看 `doctor` 输出并重启 `./scripts/start-ros2-novnc-system.sh`。
+
+**Xvfb 提示 server already running？**
+
+通常是远程设备已有 X server 使用了 `DISPLAY=:0` / `:1`，或旧进程没有退出。项目默认使用 `.env` 里的 `DISPLAY=:99`；先运行 `./scripts/status-ros2-novnc-system.sh` 和 `./scripts/stop-ros2-novnc-system.sh`，仍冲突时把 `.env` 的 `DISPLAY` 改成未占用值，例如 `:98`。
 
 **端口要怎么选？**
 

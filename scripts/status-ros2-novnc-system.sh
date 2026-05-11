@@ -4,6 +4,7 @@ set -u
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
+unset DISPLAY
 if [ -f "${PROJECT_DIR}/.env" ]; then
   set -a
   source "${PROJECT_DIR}/.env"

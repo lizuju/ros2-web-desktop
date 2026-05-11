@@ -3,7 +3,7 @@
 <p align="left">
   <a href="README.md"><img src="https://img.shields.io/badge/切换语言-简体中文-blue" alt="简体中文"></a>
   <a href="README.en.md"><img src="https://img.shields.io/badge/Switch-English-blue" alt="English"></a>
-  <a href="https://github.com/lizuju/ros2-web-desktop/releases/latest"><img src="https://img.shields.io/badge/Release-v0.1.6-green" alt="Release"></a>
+  <a href="https://github.com/lizuju/ros2-web-desktop/releases/latest"><img src="https://img.shields.io/badge/Release-v0.1.7-green" alt="Release"></a>
   <img src="https://img.shields.io/badge/No-X11%20Forwarding-orange" alt="No X11 Forwarding">
 </p>
 
@@ -60,7 +60,7 @@ Windows users can use PowerShell or Windows Terminal. If `ssh` is missing, enabl
 For normal users, download the Release archive. Git is not required:
 
 ```bash
-wget https://github.com/lizuju/ros2-web-desktop/releases/download/v0.1.6/ros2-web-desktop.tar.gz
+wget https://github.com/lizuju/ros2-web-desktop/releases/download/v0.1.7/ros2-web-desktop.tar.gz
 tar -xzf ros2-web-desktop.tar.gz
 cd ros2-web-desktop
 ./scripts/setup-ros2-novnc-system.sh
@@ -323,6 +323,10 @@ cd ~/ros2-web-desktop
 ```
 
 This is usually caused by a stopped remote service, a port conflict, or a missing SSH tunnel. Check `status` first to see whether noVNC / x11vnc / Xvfb are running, then check `doctor` and restart `./scripts/start-ros2-novnc-system.sh`.
+
+**Xvfb says server already running.**
+
+This usually means the remote device already has an X server on `DISPLAY=:0` / `:1`, or an old process did not exit. The project defaults to `DISPLAY=:99` from `.env`; run `./scripts/status-ros2-novnc-system.sh` and `./scripts/stop-ros2-novnc-system.sh` first. If it still conflicts, change `.env` to an unused display such as `DISPLAY=:98`.
 
 **How should I choose ports?**
 
