@@ -42,7 +42,7 @@ read_remote_port() {
   local quoted_project_dir
   quoted_project_dir="$(shell_quote "$REMOTE_PROJECT_DIR")"
 
-  ssh "$TARGET" "PROJECT_DIR=${quoted_project_dir}; case \"\$PROJECT_DIR\" in ~/*) PROJECT_DIR=\"\$HOME/\${PROJECT_DIR#~/}\";; esac; if [ -f \"\$PROJECT_DIR/.env\" ]; then sed -n 's/^NOVNC_PORT=//p' \"\$PROJECT_DIR/.env\" | tail -n 1; fi" 2>/dev/null || true
+  ssh "$TARGET" "PROJECT_DIR=${quoted_project_dir}; case \"\$PROJECT_DIR\" in '~') PROJECT_DIR=\"\$HOME\";; '~/'*) PROJECT_DIR=\"\$HOME/\${PROJECT_DIR#\\~/}\";; esac; if [ -f \"\$PROJECT_DIR/.env\" ]; then sed -n 's/^NOVNC_PORT=//p' \"\$PROJECT_DIR/.env\" | tail -n 1; fi" 2>/dev/null || true
 }
 
 open_url_when_ready() {
