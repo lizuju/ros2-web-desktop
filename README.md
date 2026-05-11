@@ -3,7 +3,7 @@
 <p align="left">
   <a href="README.md"><img src="https://img.shields.io/badge/切换语言-简体中文-blue" alt="简体中文"></a>
   <a href="README.en.md"><img src="https://img.shields.io/badge/Switch-English-blue" alt="English"></a>
-  <a href="https://github.com/lizuju/ros2-web-desktop/releases/latest"><img src="https://img.shields.io/badge/Release-v0.1.7-green" alt="Release"></a>
+  <a href="https://github.com/lizuju/ros2-web-desktop/releases/latest"><img src="https://img.shields.io/badge/Release-v0.1.8-green" alt="Release"></a>
   <img src="https://img.shields.io/badge/No-X11%20Forwarding-orange" alt="No X11 Forwarding">
 </p>
 
@@ -60,7 +60,7 @@ Windows 用户可以使用 PowerShell 或 Windows Terminal。若系统没有 `ss
 普通用户可以直接下载 Release 压缩包，不需要安装 Git：
 
 ```bash
-wget https://github.com/lizuju/ros2-web-desktop/releases/download/v0.1.7/ros2-web-desktop.tar.gz
+wget https://github.com/lizuju/ros2-web-desktop/releases/download/v0.1.8/ros2-web-desktop.tar.gz
 tar -xzf ros2-web-desktop.tar.gz
 cd ros2-web-desktop
 ./scripts/setup-ros2-novnc-system.sh

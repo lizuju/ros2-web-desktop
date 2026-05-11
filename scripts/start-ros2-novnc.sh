@@ -12,6 +12,7 @@ export ROS_LOCALHOST_ONLY="${ROS_LOCALHOST_ONLY:-0}"
 export RMW_IMPLEMENTATION="${RMW_IMPLEMENTATION:-rmw_fastrtps_cpp}"
 export LIBGL_ALWAYS_SOFTWARE="${LIBGL_ALWAYS_SOFTWARE:-1}"
 export QT_X11_NO_MITSHM="${QT_X11_NO_MITSHM:-1}"
+export NO_AT_BRIDGE="${NO_AT_BRIDGE:-1}"
 export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/tmp/runtime-root}"
 
 mkdir -p "$XDG_RUNTIME_DIR" /root/ros2_ws/src /tmp/ros2-novnc
@@ -41,7 +42,7 @@ cleanup() {
 }
 trap cleanup EXIT INT TERM
 
-Xvfb "$DISPLAY" -screen 0 "${DISPLAY_WIDTH}x${DISPLAY_HEIGHT}x${DISPLAY_DEPTH}" -ac +extension GLX +render -noreset >/tmp/ros2-novnc/xvfb.log 2>&1 &
+Xvfb "$DISPLAY" -screen 0 "${DISPLAY_WIDTH}x${DISPLAY_HEIGHT}x${DISPLAY_DEPTH}" -ac +extension GLX +render -noreset -nolisten tcp >/tmp/ros2-novnc/xvfb.log 2>&1 &
 pids+=("$!")
 names+=("Xvfb")
 logs+=("/tmp/ros2-novnc/xvfb.log")
@@ -53,7 +54,7 @@ pids+=("$!")
 names+=("fluxbox")
 logs+=("/tmp/ros2-novnc/fluxbox.log")
 
-x11vnc -display "$DISPLAY" -forever -shared -nopw -listen 0.0.0.0 -rfbport 5900 >/tmp/ros2-novnc/x11vnc.log 2>&1 &
+x11vnc -display "$DISPLAY" -forever -shared -nopw -listen 127.0.0.1 -rfbport 5900 >/tmp/ros2-novnc/x11vnc.log 2>&1 &
 pids+=("$!")
 names+=("x11vnc")
 logs+=("/tmp/ros2-novnc/x11vnc.log")

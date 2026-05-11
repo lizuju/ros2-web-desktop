@@ -25,6 +25,7 @@ export ROS_LOCALHOST_ONLY="${ROS_LOCALHOST_ONLY:-0}"
 export ROS_SETUP="${ROS_SETUP:-}"
 export LIBGL_ALWAYS_SOFTWARE="${LIBGL_ALWAYS_SOFTWARE:-1}"
 export QT_X11_NO_MITSHM="${QT_X11_NO_MITSHM:-1}"
+export NO_AT_BRIDGE="${NO_AT_BRIDGE:-1}"
 export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/tmp/runtime-${USER}}"
 
 doctor_hint() {
@@ -138,7 +139,7 @@ record_pid() {
   echo "$1 $2" >> "$PID_FILE"
 }
 
-Xvfb "$DISPLAY" -screen 0 "${DISPLAY_WIDTH}x${DISPLAY_HEIGHT}x${DISPLAY_DEPTH}" -ac +extension GLX +render -noreset >"${PROJECT_DIR}/logs/xvfb.log" 2>&1 &
+Xvfb "$DISPLAY" -screen 0 "${DISPLAY_WIDTH}x${DISPLAY_HEIGHT}x${DISPLAY_DEPTH}" -ac +extension GLX +render -noreset -nolisten tcp >"${PROJECT_DIR}/logs/xvfb.log" 2>&1 &
 pids+=("$!")
 names+=("Xvfb")
 logs+=("${PROJECT_DIR}/logs/xvfb.log")
@@ -152,7 +153,7 @@ names+=("fluxbox")
 logs+=("${PROJECT_DIR}/logs/fluxbox.log")
 record_pid fluxbox "$!"
 
-x11vnc -display "$DISPLAY" -forever -shared -nopw -listen 0.0.0.0 -rfbport "$VNC_PORT" >"${PROJECT_DIR}/logs/x11vnc.log" 2>&1 &
+x11vnc -display "$DISPLAY" -forever -shared -nopw -listen 127.0.0.1 -rfbport "$VNC_PORT" >"${PROJECT_DIR}/logs/x11vnc.log" 2>&1 &
 pids+=("$!")
 names+=("x11vnc")
 logs+=("${PROJECT_DIR}/logs/x11vnc.log")
