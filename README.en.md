@@ -1,4 +1,4 @@
-# ros2-web-desktop | Ubuntu / ROS 2 noVNC Remote Desktop (No X11 Forwarding)
+# ros2-web-desktop | Interactive ROS 2 Remote Desktop (No X11)
 
 <p align="left">
   <a href="README.md"><img src="https://img.shields.io/badge/切换语言-简体中文-blue" alt="简体中文"></a>
@@ -7,7 +7,7 @@
   <img src="https://img.shields.io/badge/No-X11%20Forwarding-orange" alt="No X11 Forwarding">
 </p>
 
-`ros2-web-desktop` lets users view and operate ROS 2 GUI tools such as `rviz2`, `rqt`, `rqt_graph`, `rqt_image_view`, and a graphical terminal from a browser on **macOS, Windows, or Linux**, with **no SSH X11 forwarding**.
+`ros2-web-desktop` lets users interact with remote Ubuntu / ROS 2 tools such as `rviz2`, `rqt`, and a graphical terminal from a browser on **macOS, Windows, or Linux**, with **no SSH X11 forwarding**.
 
 The GUI applications run on the remote Ubuntu / ROS 2 device. The local computer only receives a browser-based noVNC desktop and does not need ROS 2, RViz, rqt, Docker, XQuartz, or a native VNC client.
 
@@ -19,7 +19,7 @@ If this project helps you, a GitHub Star is appreciated: <https://github.com/liz
 
 ## Why It Helps
 
-- View RViz2, rqt, and other ROS GUI tools from a remote Ubuntu / ROS 2 device in a browser on Apple Silicon Mac, Windows, or Linux, without X11 forwarding.
+- View and operate remote RViz2, rqt, xterm, and other ROS GUI tools in a browser on Apple Silicon Mac, Windows, or Linux, without X11 forwarding.
 - Let users inspect robot state, topics, tf, maps, point clouds, and GUI tools without installing ROS locally.
 - Access noVNC through an SSH tunnel by default, so the remote device noVNC port is not exposed directly to the LAN.
 

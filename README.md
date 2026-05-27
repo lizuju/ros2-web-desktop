@@ -1,4 +1,4 @@
-# ros2-web-desktop | Ubuntu / ROS 2 noVNC 远程桌面（无需 X11 转发）
+# ros2-web-desktop | 可操作 ROS 2 远程桌面（免 X11）
 
 <p align="left">
   <a href="README.md"><img src="https://img.shields.io/badge/切换语言-简体中文-blue" alt="简体中文"></a>
@@ -7,7 +7,7 @@
   <img src="https://img.shields.io/badge/No-X11%20Forwarding-orange" alt="No X11 Forwarding">
 </p>
 
-`ros2-web-desktop` 可以在 **macOS、Windows、Linux** 的浏览器里查看和操作远程 Ubuntu / ROS 2 设备上的 `rviz2`、`rqt`、`rqt_graph`、`rqt_image_view` 和图形终端，**无需 SSH X11 转发**。
+`ros2-web-desktop` 可以在 **macOS、Windows、Linux** 浏览器里直接操作远程 Ubuntu / ROS 2 设备上的 `rviz2`、`rqt` 和图形终端，**无需 SSH X11 转发**。
 
 图形程序运行在远程设备上，本地电脑只接收 noVNC 网页画面。本地不需要安装 ROS 2、RViz、rqt、Docker、XQuartz 或 VNC 客户端。
 
@@ -19,7 +19,7 @@
 
 ## 核心价值
 
-- 在 Mac Apple Silicon、Windows 或 Linux 电脑上通过浏览器查看远程 Ubuntu / ROS 2 设备的 RViz2、rqt 等图形界面，无需 X11 转发。
+- 在 Mac Apple Silicon、Windows 或 Linux 浏览器里直接查看并操作远程 RViz2、rqt、xterm 等工具，无需 X11 转发。
 - 让使用者无需配置本地 ROS 环境，也能快速查看机器人状态、topic、tf、地图、点云等。
 - 通过 SSH 隧道访问 noVNC，默认不把远程设备的 noVNC 端口暴露给局域网。
 
