@@ -30,7 +30,7 @@ flowchart LR
   A["Local browser<br/>macOS / Windows / Linux"] --> B["SSH tunnel<br/>localhost:18080"]
   B --> C["Remote Ubuntu / ROS 2<br/>127.0.0.1:NOVNC_PORT"]
   C --> D["noVNC + websockify"]
-  D --> E["x11vnc + Xvfb + fluxbox"]
+  D --> E["TigerVNC / Xvnc + fluxbox"]
   E --> F["rviz2 / rqt / xterm"]
 ```
 
@@ -81,7 +81,7 @@ The setup script will:
 - ask for the robot workspace setup file, such as `/home/<user>/<robot_ws>/install/setup.bash`
 - suggest uncommon free ports, usually starting from `31880` and `31901`
 - validate port values and avoid occupied/conflicting ports
-- install noVNC, Xvfb, x11vnc, fluxbox, xterm, and related dependencies
+- install noVNC, TigerVNC, websockify, fluxbox, xterm, and related dependencies
 - print the doctor, status, start, and SSH tunnel commands
 
 Prompt guidance:
@@ -99,7 +99,7 @@ noVNC web port:
   The remote device noVNC web port. Press Enter to accept the suggested free port.
 
 Internal VNC backend port:
-  The remote device internal VNC backend port. Press Enter to accept the suggested free port.
+  The remote device internal TigerVNC backend port. Press Enter to accept the suggested free port.
 ```
 
 ### 2. Check the Remote Device
@@ -113,7 +113,7 @@ cd ~/ros2-web-desktop
 
 `doctor` only checks ROS 2, dependencies, ports, DISPLAY, and noVNC status. It does not start `rviz2` and does not add GPU load on the remote device. If you see `FAIL`, follow the printed suggestion. `WARN` usually means the service has not been started yet.
 
-Check whether noVNC / x11vnc / Xvfb are currently running:
+Check whether noVNC / TigerVNC / Xvnc are currently running:
 
 ```bash
 ./scripts/status-ros2-novnc-system.sh
@@ -288,7 +288,7 @@ cd ~/ros2-web-desktop
 ./scripts/stop-ros2-novnc-system.sh
 ```
 
-The script checks only this project's pid file and matching `websockify`, `x11vnc`, and related processes on the configured `NOVNC_PORT` / `VNC_PORT`, so it does not blindly kill unrelated services. Run `./scripts/status-ros2-novnc-system.sh` before or after stopping to check the current state.
+The script checks only this project's pid file and matching `websockify`, `TigerVNC/Xvnc`, and related processes on the configured `NOVNC_PORT` / `VNC_PORT`, so it does not blindly kill unrelated services. Run `./scripts/status-ros2-novnc-system.sh` before or after stopping to check the current state.
 
 ## Troubleshooting
 
@@ -304,11 +304,11 @@ cd ~/ros2-web-desktop
 ./scripts/doctor-ros2-novnc-system.sh
 ```
 
-This is usually caused by a stopped remote service, a port conflict, or a missing SSH tunnel. Check `status` first to see whether noVNC / x11vnc / Xvfb are running, then check `doctor` and restart `./scripts/start-ros2-novnc-system.sh`.
+This is usually caused by a stopped remote service, a port conflict, or a missing SSH tunnel. Check `status` first to see whether noVNC / TigerVNC / Xvnc are running, then check `doctor` and restart `./scripts/start-ros2-novnc-system.sh`.
 
-**Xvfb says server already running.**
+**TigerVNC / Xvnc says the display is already in use.**
 
-This usually means the remote device already has an X server on `DISPLAY=:0` / `:1`, or an old process did not exit. The project defaults to `DISPLAY=:99` from `.env`; run `./scripts/status-ros2-novnc-system.sh` and `./scripts/stop-ros2-novnc-system.sh` first. If it still conflicts, change `.env` to an unused display such as `DISPLAY=:98`.
+This usually means the remote device already has an X server on the same `DISPLAY`, or an old process did not exit. The project defaults to `DISPLAY=:99` from `.env`; run `./scripts/status-ros2-novnc-system.sh` and `./scripts/stop-ros2-novnc-system.sh` first. If it still conflicts, change `.env` to an unused display such as `DISPLAY=:98`.
 
 **How should I choose ports?**
 

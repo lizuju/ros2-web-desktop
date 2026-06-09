@@ -37,14 +37,11 @@ matches_expected_process() {
 
   args="$(pid_args "$pid")"
   case "$name" in
-    Xvfb)
-      [[ "$args" == *"Xvfb ${DISPLAY}"* ]]
+    Xtigervnc)
+      [[ "$args" == *"Xtigervnc ${DISPLAY}"* && "$args" == *"-rfbport ${VNC_PORT}"* ]]
       ;;
     fluxbox)
       [[ "$args" == *"fluxbox"* ]]
-      ;;
-    x11vnc)
-      [[ "$args" == *"x11vnc"* && "$args" == *"-rfbport ${VNC_PORT}"* ]]
       ;;
     websockify)
       [[ "$args" == *"websockify"* && "$args" == *":${NOVNC_PORT}"* && "$args" == *"127.0.0.1:${VNC_PORT}"* ]]
@@ -120,7 +117,7 @@ stop_project_port_processes() {
   done
 
   for pid in $(pids_for_port "$VNC_PORT"); do
-    stop_pid x11vnc "$pid"
+    stop_pid Xtigervnc "$pid"
   done
 }
 

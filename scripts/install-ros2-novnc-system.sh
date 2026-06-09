@@ -9,7 +9,6 @@ sudo apt-get install -y --no-install-recommends \
   libglx-mesa0 \
   mesa-utils \
   novnc \
+  tigervnc-standalone-server \
   websockify \
-  x11vnc \
-  xterm \
-  xvfb
+  xterm

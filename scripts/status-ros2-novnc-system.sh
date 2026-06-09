@@ -49,14 +49,11 @@ matches_expected_process() {
 
   args="$(pid_args "$pid")"
   case "$name" in
-    Xvfb)
-      [[ "$args" == *"Xvfb ${DISPLAY}"* ]]
+    Xtigervnc)
+      [[ "$args" == *"Xtigervnc ${DISPLAY}"* && "$args" == *"-rfbport ${VNC_PORT}"* ]]
       ;;
     fluxbox)
       [[ "$args" == *"fluxbox"* ]]
-      ;;
-    x11vnc)
-      [[ "$args" == *"x11vnc"* && "$args" == *"-rfbport ${VNC_PORT}"* ]]
       ;;
     websockify)
       [[ "$args" == *"websockify"* && "$args" == *":${NOVNC_PORT}"* && "$args" == *"127.0.0.1:${VNC_PORT}"* ]]
@@ -153,9 +150,9 @@ else
 fi
 echo
 
-check_recorded_component "Xvfb" Xvfb ", DISPLAY=${DISPLAY}"
+check_recorded_component "TigerVNC/Xvnc" Xtigervnc ", DISPLAY=${DISPLAY}, VNC_PORT=${VNC_PORT}"
 check_recorded_component "fluxbox" fluxbox ""
-check_port_component "x11vnc" x11vnc "$VNC_PORT" ", VNC_PORT=${VNC_PORT}"
+check_port_component "TigerVNC backend" Xtigervnc "$VNC_PORT" ", VNC_PORT=${VNC_PORT}"
 check_port_component "noVNC/websockify" websockify "$NOVNC_PORT" ", http://${NOVNC_LISTEN_HOST}:${NOVNC_PORT}/vnc.html"
 check_recorded_component "xterm" xterm ""
 echo

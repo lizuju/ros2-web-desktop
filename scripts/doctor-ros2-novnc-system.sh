@@ -56,14 +56,11 @@ matches_expected_process() {
 
   args="$(pid_args "$pid")"
   case "$name" in
-    Xvfb)
-      [[ "$args" == *"Xvfb ${DISPLAY}"* ]]
+    Xtigervnc)
+      [[ "$args" == *"Xtigervnc ${DISPLAY}"* && "$args" == *"-rfbport ${VNC_PORT}"* ]]
       ;;
     fluxbox)
       [[ "$args" == *"fluxbox"* ]]
-      ;;
-    x11vnc)
-      [[ "$args" == *"x11vnc"* && "$args" == *"-rfbport ${VNC_PORT}"* ]]
       ;;
     websockify)
       [[ "$args" == *"websockify"* && "$args" == *":${NOVNC_PORT}"* && "$args" == *"127.0.0.1:${VNC_PORT}"* ]]
@@ -145,7 +142,7 @@ echo "  NOVNC_PORT=${NOVNC_PORT}"
 echo "  VNC_PORT=${VNC_PORT}"
 echo
 
-for cmd in Xvfb fluxbox x11vnc websockify xterm ss; do
+for cmd in Xtigervnc fluxbox websockify xterm ss; do
   check_command "$cmd"
 done
 
@@ -187,7 +184,7 @@ check_command ros2
 echo
 
 check_port "noVNC" "$NOVNC_PORT" websockify
-check_port "VNC backend" "$VNC_PORT" x11vnc
+check_port "TigerVNC backend" "$VNC_PORT" Xtigervnc
 check_pid_file
 echo
 

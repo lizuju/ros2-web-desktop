@@ -30,7 +30,7 @@ flowchart LR
   A["本地浏览器<br/>macOS / Windows / Linux"] --> B["SSH 隧道<br/>localhost:18080"]
   B --> C["远程 Ubuntu / ROS 2<br/>127.0.0.1:NOVNC_PORT"]
   C --> D["noVNC + websockify"]
-  D --> E["x11vnc + Xvfb + fluxbox"]
+  D --> E["TigerVNC / Xvnc + fluxbox"]
   E --> F["rviz2 / rqt / xterm"]
 ```
 
@@ -81,7 +81,7 @@ cd ros2-web-desktop
 - 询问机器人工作区 setup 文件路径，例如 `/home/<user>/<robot_ws>/install/setup.bash`
 - 自动推荐不常见且未占用的端口，通常从 `31880` 和 `31901` 开始找
 - 检查端口是否有效、是否被占用、两个端口是否冲突
-- 安装 noVNC、Xvfb、x11vnc、fluxbox、xterm 等依赖
+- 安装 noVNC、TigerVNC、websockify、fluxbox、xterm 等依赖
 - 最后输出自检、状态、启动和 SSH 隧道命令
 
 提示项说明：
@@ -99,7 +99,7 @@ noVNC web port:
   远程设备上的 noVNC 网页端口。建议直接回车使用推荐值。
 
 Internal VNC backend port:
-  远程设备内部 VNC 后端端口。建议直接回车使用推荐值。
+  远程设备内部 TigerVNC 后端端口。建议直接回车使用推荐值。
 ```
 
 ### 2. 远程设备自检
@@ -113,7 +113,7 @@ cd ~/ros2-web-desktop
 
 `doctor` 只检查 ROS 2、依赖、端口、DISPLAY 和 noVNC 状态，不启动 `rviz2`，也不会增加远程设备的 GPU 负载。看到 `FAIL` 时，按输出的建议处理；只有 `WARN` 通常表示服务还没启动。
 
-查看 noVNC / x11vnc / Xvfb 当前是否运行：
+查看 noVNC / TigerVNC / Xvnc 当前是否运行：
 
 ```bash
 ./scripts/status-ros2-novnc-system.sh
@@ -288,7 +288,7 @@ cd ~/ros2-web-desktop
 ./scripts/stop-ros2-novnc-system.sh
 ```
 
-这个脚本只会按 `.env` 里的 `NOVNC_PORT` / `VNC_PORT` 和本项目 pid 文件检查 `websockify`、`x11vnc` 等进程，不会按端口号全局乱杀其它服务。停止前后可以用 `./scripts/status-ros2-novnc-system.sh` 看当前状态。
+这个脚本只会按 `.env` 里的 `NOVNC_PORT` / `VNC_PORT` 和本项目 pid 文件检查 `websockify`、`TigerVNC/Xvnc` 等进程，不会按端口号全局乱杀其它服务。停止前后可以用 `./scripts/status-ros2-novnc-system.sh` 看当前状态。
 
 ## 常见问题
 
@@ -304,11 +304,11 @@ cd ~/ros2-web-desktop
 ./scripts/doctor-ros2-novnc-system.sh
 ```
 
-通常是远程服务没启动、端口冲突，或本地 SSH 隧道没开。先用 `status` 看 noVNC / x11vnc / Xvfb 是否运行，再看 `doctor` 输出并重启 `./scripts/start-ros2-novnc-system.sh`。
+通常是远程服务没启动、端口冲突，或本地 SSH 隧道没开。先用 `status` 看 noVNC / TigerVNC / Xvnc 是否运行，再看 `doctor` 输出并重启 `./scripts/start-ros2-novnc-system.sh`。
 
-**Xvfb 提示 server already running？**
+**TigerVNC / Xvnc 提示 display 已经占用？**
 
-通常是远程设备已有 X server 使用了 `DISPLAY=:0` / `:1`，或旧进程没有退出。项目默认使用 `.env` 里的 `DISPLAY=:99`；先运行 `./scripts/status-ros2-novnc-system.sh` 和 `./scripts/stop-ros2-novnc-system.sh`，仍冲突时把 `.env` 的 `DISPLAY` 改成未占用值，例如 `:98`。
+通常是远程设备已有 X server 使用了同一个 `DISPLAY`，或旧进程没有退出。项目默认使用 `.env` 里的 `DISPLAY=:99`；先运行 `./scripts/status-ros2-novnc-system.sh` 和 `./scripts/stop-ros2-novnc-system.sh`，仍冲突时把 `.env` 的 `DISPLAY` 改成未占用值，例如 `:98`。
 
 **端口要怎么选？**
 

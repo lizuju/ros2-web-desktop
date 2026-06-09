@@ -7,6 +7,7 @@ export DISPLAY_HEIGHT="${DISPLAY_HEIGHT:-900}"
 export DISPLAY_DEPTH="${DISPLAY_DEPTH:-24}"
 export NOVNC_LISTEN_HOST="${NOVNC_LISTEN_HOST:-127.0.0.1}"
 export NOVNC_PORT="${NOVNC_PORT:-31880}"
+export VNC_PORT="${VNC_PORT:-31901}"
 export ROS_DOMAIN_ID="${ROS_DOMAIN_ID:-0}"
 export ROS_LOCALHOST_ONLY="${ROS_LOCALHOST_ONLY:-0}"
 export RMW_IMPLEMENTATION="${RMW_IMPLEMENTATION:-rmw_fastrtps_cpp}"
@@ -42,10 +43,10 @@ cleanup() {
 }
 trap cleanup EXIT INT TERM
 
-Xvfb "$DISPLAY" -screen 0 "${DISPLAY_WIDTH}x${DISPLAY_HEIGHT}x${DISPLAY_DEPTH}" -ac +extension GLX +render -noreset -nolisten tcp >/tmp/ros2-novnc/xvfb.log 2>&1 &
+Xtigervnc "$DISPLAY" -geometry "${DISPLAY_WIDTH}x${DISPLAY_HEIGHT}" -depth "$DISPLAY_DEPTH" -rfbport "$VNC_PORT" -localhost -SecurityTypes None >/tmp/ros2-novnc/tigervnc.log 2>&1 &
 pids+=("$!")
-names+=("Xvfb")
-logs+=("/tmp/ros2-novnc/xvfb.log")
+names+=("Xtigervnc")
+logs+=("/tmp/ros2-novnc/tigervnc.log")
 
 sleep 1
 
@@ -54,12 +55,7 @@ pids+=("$!")
 names+=("fluxbox")
 logs+=("/tmp/ros2-novnc/fluxbox.log")
 
-x11vnc -display "$DISPLAY" -forever -shared -nopw -listen 127.0.0.1 -rfbport 5900 >/tmp/ros2-novnc/x11vnc.log 2>&1 &
-pids+=("$!")
-names+=("x11vnc")
-logs+=("/tmp/ros2-novnc/x11vnc.log")
-
-websockify --web="${NOVNC_WEB_DIR}" "${NOVNC_LISTEN_HOST}:${NOVNC_PORT}" 127.0.0.1:5900 >/tmp/ros2-novnc/novnc.log 2>&1 &
+websockify --web="${NOVNC_WEB_DIR}" "${NOVNC_LISTEN_HOST}:${NOVNC_PORT}" "127.0.0.1:${VNC_PORT}" >/tmp/ros2-novnc/novnc.log 2>&1 &
 pids+=("$!")
 names+=("websockify")
 logs+=("/tmp/ros2-novnc/novnc.log")

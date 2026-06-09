@@ -65,7 +65,7 @@ if port_owner_lines "$VNC_PORT" | grep -q .; then
   exit 1
 fi
 
-for cmd in Xvfb fluxbox x11vnc websockify xterm; do
+for cmd in Xtigervnc fluxbox websockify xterm; do
   if ! command -v "$cmd" >/dev/null 2>&1; then
     echo "Missing command: ${cmd}"
     echo "Run: ./scripts/install-ros2-novnc-system.sh"
@@ -105,11 +105,8 @@ print_component_failure() {
   tail -80 "$log_file" 2>/dev/null || true
   echo
   case "$name" in
-    Xvfb)
-      echo "Check DISPLAY=${DISPLAY} and whether another Xvfb is already using it."
-      ;;
-    x11vnc)
-      echo "Check VNC_PORT=${VNC_PORT}, DISPLAY=${DISPLAY}, and whether Xvfb is running."
+    Xtigervnc)
+      echo "Check DISPLAY=${DISPLAY}, VNC_PORT=${VNC_PORT}, and whether another TigerVNC/Xvnc server is already running."
       ;;
     websockify)
       echo "Check NOVNC_PORT=${NOVNC_PORT} and VNC_PORT=${VNC_PORT}."
@@ -139,11 +136,11 @@ record_pid() {
   echo "$1 $2" >> "$PID_FILE"
 }
 
-Xvfb "$DISPLAY" -screen 0 "${DISPLAY_WIDTH}x${DISPLAY_HEIGHT}x${DISPLAY_DEPTH}" -ac +extension GLX +render -noreset -nolisten tcp >"${PROJECT_DIR}/logs/xvfb.log" 2>&1 &
+Xtigervnc "$DISPLAY" -geometry "${DISPLAY_WIDTH}x${DISPLAY_HEIGHT}" -depth "$DISPLAY_DEPTH" -rfbport "$VNC_PORT" -localhost -SecurityTypes None >"${PROJECT_DIR}/logs/tigervnc.log" 2>&1 &
 pids+=("$!")
-names+=("Xvfb")
-logs+=("${PROJECT_DIR}/logs/xvfb.log")
-record_pid Xvfb "$!"
+names+=("Xtigervnc")
+logs+=("${PROJECT_DIR}/logs/tigervnc.log")
+record_pid Xtigervnc "$!"
 
 sleep 1
 
@@ -152,12 +149,6 @@ pids+=("$!")
 names+=("fluxbox")
 logs+=("${PROJECT_DIR}/logs/fluxbox.log")
 record_pid fluxbox "$!"
-
-x11vnc -display "$DISPLAY" -forever -shared -nopw -listen 127.0.0.1 -rfbport "$VNC_PORT" >"${PROJECT_DIR}/logs/x11vnc.log" 2>&1 &
-pids+=("$!")
-names+=("x11vnc")
-logs+=("${PROJECT_DIR}/logs/x11vnc.log")
-record_pid x11vnc "$!"
 
 websockify --web="${NOVNC_WEB_DIR}" "${NOVNC_LISTEN_HOST}:${NOVNC_PORT}" "127.0.0.1:${VNC_PORT}" >"${PROJECT_DIR}/logs/novnc.log" 2>&1 &
 pids+=("$!")

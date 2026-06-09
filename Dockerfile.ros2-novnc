@@ -40,12 +40,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ros-humble-rmw-cyclonedds-cpp \
     ros-humble-rqt-common-plugins \
     ros-humble-rqt-robot-plugins \
+    tigervnc-standalone-server \
     vim \
     websockify \
     wget \
-    x11vnc \
     xterm \
-    xvfb \
     && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p /root/ros2_ws/src \
