@@ -3,7 +3,7 @@
 <p align="left">
   <a href="README.md"><img src="https://img.shields.io/badge/切换语言-简体中文-blue" alt="简体中文"></a>
   <a href="README.en.md"><img src="https://img.shields.io/badge/Switch-English-blue" alt="English"></a>
-  <a href="https://github.com/lizuju/ros2-web-desktop/releases/latest"><img src="https://img.shields.io/badge/Release-v0.1.8-green" alt="Release"></a>
+  <a href="https://github.com/lizuju/ros2-web-desktop/releases/latest"><img src="https://img.shields.io/badge/Release-v0.1.9-green" alt="Release"></a>
   <img src="https://img.shields.io/badge/No-X11%20Forwarding-orange" alt="No X11 Forwarding">
 </p>
 
@@ -51,7 +51,7 @@ The local computer only needs:
 - the `ssh` command
 - network access to the remote Ubuntu / ROS 2 device
 
-Windows users can use PowerShell or Windows Terminal. If `ssh` is missing, enable OpenSSH Client.
+The local computer does not need to download this project. Windows users can use PowerShell or Windows Terminal. If `ssh` is missing, enable OpenSSH Client.
 
 ## Quick Start
 
@@ -60,7 +60,7 @@ Windows users can use PowerShell or Windows Terminal. If `ssh` is missing, enabl
 For normal users, download the Release archive. Git is not required:
 
 ```bash
-wget https://github.com/lizuju/ros2-web-desktop/releases/download/v0.1.8/ros2-web-desktop.tar.gz
+wget https://github.com/lizuju/ros2-web-desktop/releases/download/v0.1.9/ros2-web-desktop.tar.gz
 tar -xzf ros2-web-desktop.tar.gz
 cd ros2-web-desktop
 ./scripts/setup-ros2-novnc-system.sh
@@ -130,35 +130,17 @@ Keep this terminal open. When you see output like this, the remote side is runni
 
 ```text
 noVNC is listening on port 31880
-Secure mode is enabled. Use SSH tunnel, then open http://localhost:31880/vnc.html
+Secure mode is enabled.
+On the local computer terminal, run:
+  ssh -N -L 18080:127.0.0.1:31880 <device-user>@<device-host>
+Then open this URL in the local browser:
+  http://localhost:18080/vnc.html
 Press Ctrl+C here to stop it.
 ```
 
-Do not open the printed `localhost:31880` directly from your local browser. That address is local to the remote device. Open an SSH tunnel from the local computer first.
+Run the SSH command in the local computer terminal, not in the browser. The browser opens `http://localhost:18080/vnc.html`.
 
 ### 4. Open an SSH Tunnel from the Local Computer
-
-Use the project helper when possible. It reads `NOVNC_PORT` from remote `~/ros2-web-desktop/.env`, chooses a free local port starting from `18080`, and opens the browser after the tunnel is ready.
-
-macOS / Linux:
-
-```bash
-./scripts/open-ros2-novnc-tunnel.sh <device-user>@<device-host>
-```
-
-Windows PowerShell:
-
-```powershell
-.\scripts\open-ros2-novnc-tunnel.ps1 <device-user>@<device-host>
-```
-
-If the remote project is not in `~/ros2-web-desktop`, set the directory:
-
-```bash
-REMOTE_PROJECT_DIR=/path/to/ros2-web-desktop ./scripts/open-ros2-novnc-tunnel.sh <device-user>@<device-host>
-```
-
-You can also run the SSH tunnel manually:
 
 ```bash
 ssh -N -L 18080:127.0.0.1:<NOVNC_PORT> <device-user>@<device-host>
@@ -174,7 +156,7 @@ After entering the remote device user's password, the terminal will stay open. T
 
 ### 5. Open the Browser
 
-If the browser does not open automatically, open the URL printed by the tunnel helper, for example:
+Open the local browser manually:
 
 ```text
 http://localhost:18080/vnc.html
@@ -330,7 +312,7 @@ This usually means the remote device already has an X server on `DISPLAY=:0` / `
 
 **How should I choose ports?**
 
-`NOVNC_PORT` and `VNC_PORT` are remote device ports. Setup suggests free ports automatically. If local `18080` is busy, the tunnel helper chooses the next free local port.
+`NOVNC_PORT` and `VNC_PORT` are remote device ports. Setup suggests free ports automatically. If local `18080` is busy, change the local tunnel port to `18081` or another free port.
 
 **What does the local computer need?**
 
@@ -338,7 +320,7 @@ Only a browser and the `ssh` command. macOS / Linux include it by default. On Wi
 
 **Does Windows work?**
 
-Yes. Run `.\scripts\open-ros2-novnc-tunnel.ps1 <device-user>@<device-host>`, then open the URL printed by the script.
+Yes. Run `ssh -N -L 18080:127.0.0.1:<NOVNC_PORT> <device-user>@<device-host>` in PowerShell or Windows Terminal, then open `http://localhost:18080/vnc.html`.
 
 **What is the advantage over Foxglove?**
 

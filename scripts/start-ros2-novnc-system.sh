@@ -184,11 +184,21 @@ if ! kill -0 "$xterm_pid" 2>/dev/null; then
   exit 1
 fi
 
+remote_host="$(hostname -I 2>/dev/null | awk '{print $1}' || true)"
+if [ -z "$remote_host" ]; then
+  remote_host="$(hostname)"
+fi
+remote_user="${USER:-$(id -un)}"
+
 echo "noVNC is listening on port ${NOVNC_PORT}"
 if [ "${NOVNC_LISTEN_HOST}" = "127.0.0.1" ] || [ "${NOVNC_LISTEN_HOST}" = "localhost" ]; then
-  echo "Secure mode is enabled. Use SSH tunnel, then open http://localhost:${NOVNC_PORT}/vnc.html"
+  echo "Secure mode is enabled."
+  echo "On the local computer terminal, run:"
+  echo "  ssh -N -L 18080:127.0.0.1:${NOVNC_PORT} ${remote_user}@${remote_host}"
+  echo "Then open this URL in the local browser:"
+  echo "  http://localhost:18080/vnc.html"
 else
-  echo "Open http://$(hostname -I | awk '{print $1}'):${NOVNC_PORT}/vnc.html from the local computer"
+  echo "Open http://${remote_host}:${NOVNC_PORT}/vnc.html from the local computer"
 fi
 echo "Press Ctrl+C here to stop it."
 

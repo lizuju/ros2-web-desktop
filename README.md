@@ -3,7 +3,7 @@
 <p align="left">
   <a href="README.md"><img src="https://img.shields.io/badge/切换语言-简体中文-blue" alt="简体中文"></a>
   <a href="README.en.md"><img src="https://img.shields.io/badge/Switch-English-blue" alt="English"></a>
-  <a href="https://github.com/lizuju/ros2-web-desktop/releases/latest"><img src="https://img.shields.io/badge/Release-v0.1.8-green" alt="Release"></a>
+  <a href="https://github.com/lizuju/ros2-web-desktop/releases/latest"><img src="https://img.shields.io/badge/Release-v0.1.9-green" alt="Release"></a>
   <img src="https://img.shields.io/badge/No-X11%20Forwarding-orange" alt="No X11 Forwarding">
 </p>
 
@@ -51,7 +51,7 @@ macOS / Linux / Windows 均可使用。
 - `ssh` 命令
 - 能通过网络访问远程 Ubuntu / ROS 2 设备
 
-Windows 用户可以使用 PowerShell 或 Windows Terminal。若系统没有 `ssh`，需要启用 OpenSSH Client。
+本地电脑不需要下载本项目。Windows 用户可以使用 PowerShell 或 Windows Terminal。若系统没有 `ssh`，需要启用 OpenSSH Client。
 
 ## 快速上手
 
@@ -60,7 +60,7 @@ Windows 用户可以使用 PowerShell 或 Windows Terminal。若系统没有 `ss
 普通用户可以直接下载 Release 压缩包，不需要安装 Git：
 
 ```bash
-wget https://github.com/lizuju/ros2-web-desktop/releases/download/v0.1.8/ros2-web-desktop.tar.gz
+wget https://github.com/lizuju/ros2-web-desktop/releases/download/v0.1.9/ros2-web-desktop.tar.gz
 tar -xzf ros2-web-desktop.tar.gz
 cd ros2-web-desktop
 ./scripts/setup-ros2-novnc-system.sh
@@ -130,35 +130,17 @@ cd ~/ros2-web-desktop
 
 ```text
 noVNC is listening on port 31880
-Secure mode is enabled. Use SSH tunnel, then open http://localhost:31880/vnc.html
+Secure mode is enabled.
+On the local computer terminal, run:
+  ssh -N -L 18080:127.0.0.1:31880 <device-user>@<device-host>
+Then open this URL in the local browser:
+  http://localhost:18080/vnc.html
 Press Ctrl+C here to stop it.
 ```
 
-注意：这里的 `localhost:31880` 是远程设备自己的本地地址，不是你本地电脑的浏览器地址。本地电脑需要先开 SSH 隧道。
+注意：SSH 命令是在本地电脑终端运行，不是在浏览器输入。浏览器打开的是 `http://localhost:18080/vnc.html`。
 
 ### 4. 本地电脑打开 SSH 隧道
-
-推荐使用项目自带脚本。它会从远程 `~/ros2-web-desktop/.env` 自动读取 `NOVNC_PORT`，从 `18080` 开始自动选择本地未占用端口，并在隧道就绪后打开浏览器。
-
-macOS / Linux：
-
-```bash
-./scripts/open-ros2-novnc-tunnel.sh <device-user>@<device-host>
-```
-
-Windows PowerShell：
-
-```powershell
-.\scripts\open-ros2-novnc-tunnel.ps1 <device-user>@<device-host>
-```
-
-如果远程项目不在 `~/ros2-web-desktop`，可以指定路径：
-
-```bash
-REMOTE_PROJECT_DIR=/path/to/ros2-web-desktop ./scripts/open-ros2-novnc-tunnel.sh <device-user>@<device-host>
-```
-
-也可以手动运行 SSH 隧道：
 
 ```bash
 ssh -N -L 18080:127.0.0.1:<NOVNC_PORT> <device-user>@<device-host>
@@ -174,7 +156,7 @@ ssh -N -L 18080:127.0.0.1:31880 <device-user>@<device-host>
 
 ### 5. 浏览器访问
 
-如果没有自动打开浏览器，手动打开脚本输出的地址，例如：
+手动打开本地浏览器：
 
 ```text
 http://localhost:18080/vnc.html
@@ -330,7 +312,7 @@ cd ~/ros2-web-desktop
 
 **端口要怎么选？**
 
-`NOVNC_PORT` 和 `VNC_PORT` 是远程设备端口，setup 会自动推荐空闲端口。本地 `18080` 被占用时，项目隧道脚本会自动换到下一个空闲端口。
+`NOVNC_PORT` 和 `VNC_PORT` 是远程设备端口，setup 会自动推荐空闲端口。本地 `18080` 被占用时，把 SSH 隧道里的本地端口改成 `18081` 或其它空闲端口。
 
 **本地电脑需要安装什么？**
 
@@ -338,7 +320,7 @@ cd ~/ros2-web-desktop
 
 **Windows 可以用吗？**
 
-可以。使用 `.\scripts\open-ros2-novnc-tunnel.ps1 <device-user>@<device-host>` 打开 SSH 隧道，再用浏览器访问脚本输出的地址。
+可以。用 PowerShell 或 Windows Terminal 运行 `ssh -N -L 18080:127.0.0.1:<NOVNC_PORT> <device-user>@<device-host>`，再用浏览器打开 `http://localhost:18080/vnc.html`。
 
 **和 Foxglove 比有什么优势？**
 
